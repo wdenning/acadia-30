@@ -1875,7 +1875,7 @@ function fillDrawer(id){const p=BY[id];
   document.getElementById("dNote").textContent=p.note;
   document.getElementById("dTrails").innerHTML=p.t.map(t=>`<li>${t}</li>`).join("");
   const q=encodeURIComponent(`${p.n} Acadia Maine`);
-  document.getElementById("dLinks").innerHTML=`<a href="https://en.wikipedia.org/w/index.php?search=${q}" target="_blank" rel="noopener">Wikipedia ↗</a>${p.pk?`<a href="https://peakery.com/${p.pk}/" target="_blank" rel="noopener">Peakery ↗</a>`:""}<button id="dMap">Show on map</button>`;
+  document.getElementById("dLinks").innerHTML=`${p.pk?`<a href="https://peakery.com/${p.pk}/" target="_blank" rel="noopener">Peakery ↗</a>`:""}<button id="dMap">Show on map</button>`;
   document.getElementById("dMap").onclick=()=>{closePeak();setView("map");document.getElementById("map").scrollIntoView({block:"center",behavior:RM?"auto":"smooth"});selectOnMap(id,true)};
   const nb=document.getElementById("dNbrs");nb.innerHTML="";
   P.filter(o=>o.g===p.g&&o.id!==id).forEach(o=>{const bb=document.createElement("button");bb.textContent=(done[o.id]?"✓ ":"")+o.n;bb.onclick=()=>openPeak(o.id);nb.appendChild(bb)});
