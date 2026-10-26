@@ -9,18 +9,7 @@ const fmt=n=>n.toLocaleString("en-US");
 const SEEN="acadia30-others-seen",EXTKEY="acadia30-ext";
 
 // Named summits not on either list (USGS GNIS positions and heights). Kind decides when they leave.
-const OTHER=[
- ["Youngs Mountain",44.39196,-68.2673,678,"private"],["Ox Hill",44.30007,-68.23557,307,"private"],["Ireson Hill",44.43194,-68.26313,226,"private"],
- ["Frenchmans Hill",44.3965,-68.30609,255,"private"],["Schooner Head",44.34441,-68.17519,96,"private"],["Carter Nubble",44.32345,-68.34616,472,"private"],
- ["Hio Hill",44.26507,-68.32489,172,"private"],["Robbins Hill",44.28813,-68.41002,242,"private"],["Murphy Hill",44.2793,-68.40632,169,"private"],
- ["Butlers Hill",44.29174,-68.42057,null,"private"],["Billings Hill",44.30729,-68.42231,156,"private"],["Burnt Hill",44.25896,-68.36258,144,"private"],
- ["Big Rocks",44.2434,-68.33613,36,"private"],
- ["The Whitecap",44.36418,-68.23535,915,"trailless"],["McFarland Mountain",44.38223,-68.26513,732,"trailless"],["Halfway Mountain",44.33439,-68.1925,500,"trailless"],
- ["Great Hill",44.38594,-68.23181,492,"trailless"],["Great Hill (south)",44.37418,-68.22952,null,"trailless"],["Brewer Mountain",44.38208,-68.24961,431,"trailless"],
- ["Enoch Mountain",44.33856,-68.18798,412,"trailless"],["Barr Hill",44.30158,-68.24968,338,"trailless"],["Mitchell Hill",44.3109,-68.2614,262,"trailless"],
- ["Bald Hill",44.28769,-68.38853,247,"trailless"],["Mount Gilboa",44.26174,-68.36774,171,"trailless"],["Cranberry Hill",44.34773,-68.18049,168,"trailless"],
- ["China Hill",44.26709,-68.36627,164,"trailless"],["Pine Hill",44.31455,-68.39366,null,"trailless"]
-];
+const OTHER=A.RESEARCH.peaks.filter(r=>r.status!=="extension").map(r=>[r.name,r.lat,r.lon,r.elev_ft,r.status==="not-eligible"?"private":"trailless"]);
 const FULL=A.P.filter(p=>!p.ext);
 const ALL=[
  ...FULL.map(p=>({id:p.id,name:p.n,kind:"full",c:A.POS[p.id],e:p.e})),
@@ -119,7 +108,7 @@ const S=[
               :`Add the ${word(N_EXT).toLowerCase()} to your challenge and the whole site switches to Acadia ${30+N_EXT}: the chart, the map, the rankings and your progress ring. Your checkmarks are kept either way.`,
   run(){state={};ALL.forEach(x=>state[x.id]=x.kind==="full"||x.kind==="ext"?"on":"off");push();count(30+N_EXT,A.EXT_ON?"in your challenge":"if you add them",RM?0:600);
     whenMap(()=>imap.fitBounds(ISLAND,{padding:{top:60,bottom:innerHeight*.42,left:40,right:40},pitch:20,bearing:0,duration:RM?0:1500}));
-    try{localStorage.setItem(SEEN,"1")}catch(e){}
+    try{localStorage.setItem(SEEN,"1")}catch(e){}dispatchEvent(new Event("acadia30:otherssee"));
     $("oChoice").innerHTML=A.EXT_ON
       ?`<button class="ibtn primary" data-keep>Keep all ${30+N_EXT}</button><button class="ibtn" data-ext="0">Back to the Full 30</button>`
       :`<button class="ibtn primary" data-ext="1">Add the ${word(N_EXT).toLowerCase()} peaks</button><button class="ibtn" data-keep>Keep the Full 30</button>`;
