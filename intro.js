@@ -33,7 +33,7 @@ function stopAll(){timers.forEach(clearTimeout);timers=[];cancelAnimationFrame(r
 
 /* ---- stages built from the site's own silhouettes and chart ---- */
 function rangeSVG(){
-  const W=1200,H=360,G=330,L=60,R=1140,step=(R-L)/29,K=290/1528;
+  const W=1200,H=360,G=330,L=60,R=1140,step=(R-L)/Math.max(1,byH.length-1),K=290/1528;
   const paths=byH.map((p,i)=>`<path class="rise" style="animation-delay:${RM?0:180+i*55}ms" d="${A.silD(p,W,G,1,K,L+i*step)}"/>`).join("");
   return `<svg class="intro-range" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
     <g class="sea">${[0,1,2].map(k=>`<path d="M40 ${G+8+k*7}H1160" style="opacity:${.5-k*.15}"/>`).join("")}</g>${paths}</svg>`;
@@ -41,7 +41,7 @@ function rangeSVG(){
 function chartClone(){
   const src=document.getElementById("heights");if(!src)return"";
   const c=src.cloneNode(true);c.removeAttribute("id");c.classList.remove("still");c.classList.add("intro-chart");
-  const step=(1100-150)/29;
+  const step=(1100-150)/Math.max(1,A.rankE.length-1);
   A.rankE.forEach((id,i)=>{const g=c.querySelector(`.mt[data-id="${id}"]`);if(g){g.style.transition="none";g.style.transform=`translate(${(150+i*step).toFixed(1)}px,0px)`;g.removeAttribute("tabindex");g.classList.remove("dim")}});
   c.querySelectorAll(".glabels").forEach(n=>n.classList.remove("on"));
   c.querySelectorAll("[id]").forEach(n=>n.id="i-"+n.id);
@@ -51,7 +51,7 @@ function chartClone(){
 function goStage(){
   const d=A.getDone(),n=Object.keys(d).length;
   return `<div class="intro-go"><svg viewBox="0 0 30 36" aria-hidden="true"><path d="M15 1 L28 6 V20 C28 28 21 33 15 35 C9 33 2 28 2 20 V6 Z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5 25 L11 15 L14 19 L18 11 L25 25 Z" fill="currentColor"/><circle cx="21" cy="9" r="1.8" fill="currentColor"/></svg>
-    <b>${n} <span>of 30</span></b><small>${n?"summited so far":"summits to go"}</small></div>`;
+    <b>${n} <span>of ${A.P.length}</span></b><small>${n?"summited so far":"summits to go"}</small></div>`;
 }
 
 /* ---- the intro's own map, built from the site's map style ---- */

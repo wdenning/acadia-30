@@ -81,7 +81,7 @@ $("offRemove").onclick=async()=>{await caches.delete(OFF);await caches.delete("a
 function download(name,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/csv;charset=utf-8"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 const q=v=>{v=v==null?"":String(v);return/[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v};
 $("dlCsv").onclick=()=>{const{P,G}=window.ACADIA30;
-  const rows=[["name","elevation_ft","prominence_ft","outing","former_name","lat","lon","peakery_url"],...[...P].sort((a,b)=>b.e-a.e).map(p=>[p.n,p.e,p.p,G[p.g].n,p.o||"",p.lat,p.lon,`https://peakery.com/${p.pk}/`])];
+  const rows=[["name","elevation_ft","prominence_ft","outing","former_name","lat","lon","peakery_url"],...[...P].sort((a,b)=>b.e-a.e).map(p=>[p.n,(p.est?"~":"")+p.e,p.p??"",G[p.g].n,p.o||"",p.lat,p.lon,p.pk?`https://peakery.com/${p.pk}/`:""])];
   download("acadia-30-peaks.csv",rows.map(r=>r.map(q).join(",")).join("\n"))};
 $("dlProgress").onclick=()=>{const{P,getDone}=window.ACADIA30,d=getDone();
   const rows=[["name","elevation_ft","summited","date"],...[...P].sort((a,b)=>b.e-a.e).map(p=>[p.n,p.e,d[p.id]?"yes":"no",d[p.id]||""])];

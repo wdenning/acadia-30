@@ -6,6 +6,7 @@ A tracker for the Acadia National Park Full 30 Peak Challenge (Peakery's list). 
 - **Trail map**: OpenStreetMap trails and summits drawn in the site's own style, over shaded relief and contours (in feet) from USGS elevation data. Hover a trail to trace it; tap a summit to highlight the trails that reach it.
 - **Rankings** by elevation and prominence, nine suggested outings, and a check-off list with summit dates
 - **Animated introduction** to the park, the challenge and the route, built from the site's own chart and map. It plays once; *Replay intro* in the footer brings it back.
+- **The Other Peaks**: an animation that starts from all 63 named summits on the island, removes the private and trailless ones, and lets visitors add the six that have a public trail or carriage road (Acadia 36). The research behind it is in `research/`.
 - **Installable app with an offline copy**: footer → *Download as app*. "Save offline copy" stores the page and the island's map (about 25 MB) for use with no signal.
 
 It's static files with no build step, no server and no tracking. Checkmarks are saved only in each visitor's own browser.

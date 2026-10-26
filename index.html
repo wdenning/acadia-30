@@ -78,6 +78,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 h1{font-family:var(--f-display);font-weight:900;font-size:clamp(56px,11vw,128px);line-height:.82;letter-spacing:.005em;margin:14px 0 10px;text-transform:uppercase;text-wrap:balance}
 h1 span{display:block;font-weight:500;font-size:.32em;letter-spacing:.12em;line-height:1.1;color:var(--band-muted)}
 .lede{max-width:56ch;color:var(--band-muted);margin:0;font-size:14px}
+.band-link{margin-top:14px;display:inline-flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:700;font-size:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--band-ink);border:1.5px solid color-mix(in srgb,var(--band-ink) 55%,transparent);border-radius:999px;padding:7px 16px}
+.band-link:hover{border-color:var(--band-ink);background:color-mix(in srgb,var(--band-ink) 10%,transparent)}
+.band-link span{transition:transform .2s}.band-link:hover span{transform:translateX(3px)}
+.toast{position:fixed;z-index:4000;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);background:var(--band);color:var(--band-ink);border-radius:var(--r);padding:12px 18px;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:min(520px,calc(100vw - 32px))}
 .prog{display:grid;grid-template-columns:auto auto;gap:4px 22px;align-items:center}
 .ring{grid-row:span 3;width:112px;height:112px}
 .ring circle{fill:none;stroke-width:7}
@@ -332,6 +336,12 @@ html.intro-open,html.intro-open body{overflow:hidden}
 .ibtn:hover{opacity:.9}
 @media (max-width:640px){.intro-stage{bottom:50%}.intro-chartwrap{width:min(100%,calc((50vh - 96px) * 2.35))}.intro-cap p{font-size:15px}.intro-dot{width:18px}}
 
+.o-count{display:flex;align-items:baseline;gap:10px}
+.o-count:empty{display:none}
+.o-count b{font-family:var(--f-display);font-weight:900;font-size:clamp(44px,7vw,72px);line-height:.9;font-variant-numeric:tabular-nums}
+.o-count span{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--band-muted)}
+.others .intro-cap h2{font-size:clamp(44px,8vw,100px)}
+
 /* dialogs */
 .dlg{border:0;padding:0;background:var(--surface);color:var(--ink);border-radius:6px;width:min(620px,calc(100vw - 24px));max-height:calc(100dvh - 40px);overflow:hidden;display:flex;flex-direction:column}
 .dlg:not([open]){display:none}
@@ -399,13 +409,14 @@ progress{width:100%;height:8px;accent-color:var(--ink)}
       </div>
       <h1><span>The Full 30 Peak Challenge</span>Acadia&nbsp;30</h1>
       <p class="lede">Every summit on Peakery's Acadia Full 30 list, all on Mount Desert Island. Tap a peak to read about it and log your summit.</p>
+      <button class="band-link" data-others>The Other Peaks <span aria-hidden="true">→</span></button>
     </div>
     <div class="prog" aria-live="polite">
       <svg class="ring" viewBox="0 0 112 112" role="img" aria-label="Summit progress">
         <circle class="trk" cx="56" cy="56" r="48"/>
         <circle class="val" id="ringVal" cx="56" cy="56" r="48" stroke-dasharray="301.6" stroke-dashoffset="301.6"/>
         <text x="56" y="60" font-size="34" id="ringNum">0</text>
-        <text x="56" y="80" font-size="12" letter-spacing="2" opacity=".7">OF 30</text>
+        <text x="56" y="80" font-size="12" letter-spacing="2" opacity=".7" id="ringOf">OF 30</text>
       </svg>
       <div class="stat"><b class="mono" id="stFeet">0 ft</b><small>Summit feet logged</small></div>
       <div class="stat"><b id="stGroups">0 / 9</b><small>Outings complete</small></div>
@@ -461,7 +472,7 @@ progress{width:100%;height:8px;accent-color:var(--ink)}
         </div>
         <div class="legend">
           <h3>Key</h3>
-          <div><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 2 L16 14 H2 Z" fill="var(--land)" stroke="var(--ink)" stroke-width="1.6"/></svg>Acadia 30 summit, still to climb</div>
+          <div><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 2 L16 14 H2 Z" fill="var(--land)" stroke="var(--ink)" stroke-width="1.6"/></svg><span id="keyPeak">Acadia 30 summit, still to climb</span></div>
           <div><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 2 L16 14 H2 Z" fill="var(--ink)" stroke="var(--ink)" stroke-width="1.6"/></svg>Summited</div>
           <div><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 4 L14 13 H4 Z" fill="var(--land)" stroke="var(--muted)" stroke-width="1.2"/></svg>Other named summit</div>
           <div><svg width="24" height="8" viewBox="0 0 24 8"><path d="M0 4 H24" stroke="var(--ink)" stroke-width="1.3"/></svg>Hiking trail</div>
@@ -564,6 +575,12 @@ progress{width:100%;height:8px;accent-color:var(--ink)}
       <li><a href="https://github.com/simonepri/geo-maps" target="_blank" rel="noopener">geo-maps</a><span>The coastline shown when map tiles can't load.</span></li>
       <li><span><b>Acadirettissima traverse</b>: a two-leg GPS track over 26 peaks, supplied by the site's author.</span></li>
     </ul></section>
+    <section><h3>The Other Peaks</h3><ul>
+      <li><a href="https://geo.mytopo.com/feature-class/maine/hancock/summit/" target="_blank" rel="noopener">USGS Geographic Names (GNIS), via MyTopo</a><span>Every named summit in Hancock County, filtered to Mount Desert Island by position; heights and positions of the extra peaks.</span></li>
+      <li><a href="https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer" target="_blank" rel="noopener">NPS Land Resources Division boundary</a><span>Which summits fall inside Acadia's boundary.</span></li>
+      <li><a href="https://www.gardenpreserve.org/_files/ugd/847c52_f1a64922820d4aa3b2bfcc2e738f2bb4.pdf" target="_blank" rel="noopener">Land &amp; Garden Preserve trail map</a><span>Public trails to Eliot Mountain and around Little Long Pond.</span></li>
+      <li><a href="https://fastestknowntime.com/route/acadia-national-park-peaks-traverse-me" target="_blank" rel="noopener">Acadia National Park Peaks Traverse</a><span>Notes on off-trail and abandoned-trail summits.</span></li>
+    </ul></section>
     <section><h3>Design</h3><ul>
       <li><span><b>Johnson's Chart of Comparative Heights of Mountains</b> (A. J. Johnson, 1860s) inspired the heights chart. The outlines here are drawn by hand; heights are to scale.</span></li>
     </ul></section>
@@ -596,6 +613,25 @@ progress{width:100%;height:8px;accent-color:var(--ink)}
       <div class="intro-dots" id="introDots"></div>
       <button class="ibtn primary" id="introNext">Next</button>
       <button class="ibtn" id="introOffline" hidden>Save map for offline</button>
+    </div>
+  </div>
+</div>
+
+<div class="intro others" id="others" hidden role="dialog" aria-modal="true" aria-labelledby="oTitle" aria-describedby="oBody">
+  <div class="intro-map" id="oMap" aria-hidden="true"></div>
+  <div class="intro-shade" aria-hidden="true"></div>
+  <button class="intro-skip" id="oSkip">Close <kbd>Esc</kbd></button>
+  <div class="intro-cap">
+    <div class="intro-eyebrow" id="oEyebrow"></div>
+    <h2 id="oTitle"></h2>
+    <p id="oBody"></p>
+    <div class="o-count" id="oCount" aria-live="polite"></div>
+    <div class="intro-extra" id="oExtra" aria-live="polite"></div>
+    <div class="o-choice btnrow" id="oChoice" hidden></div>
+    <div class="intro-nav">
+      <button class="intro-back" id="oBack" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 3 L5 9 L11 15"/></svg></button>
+      <div class="intro-dots" id="oDots"></div>
+      <button class="ibtn primary" id="oNext">Next</button>
     </div>
   </div>
 </div>
@@ -739,9 +775,36 @@ const P = [
   note:"The shortest peak on the list, but the short climb ends with a big view over the mouth of Somes Sound.",
   t:["Flying Mtn Trail"]}
 ];
+// "The Other Peaks" extension: named summits with a public trail or carriage road to the top.
+// Elevations and positions from USGS GNIS; prominence not published for these.
+const EXT=[
+ {id:"eagles-crag",n:"Eagles Crag",s:"Eagles Crag",o:null,e:703,p:null,lat:44.32585,lon:-68.21973,g:"cadillac",lb:"r",pk:null,ext:1,
+  note:"A ledge on Cadillac's south ridge with a view over Blackwoods and the Cranberry Isles. The short Eagles Crag loop branches off the Cadillac South Ridge Trail.",
+  t:["Eagles Crag Loop","Cadillac South Ridge"]},
+ {id:"eliot",n:"Eliot Mountain",s:"Eliot",o:null,e:456,p:null,lat:44.30356,lon:-68.27396,g:"preserve",lb:"l",pk:null,ext:1,
+  note:"Above Northeast Harbor on the Land & Garden Preserve, a nonprofit that keeps its trails open to the public. Thuya Garden is on the way up. No bikes; dog rules vary by trail.",
+  t:["Eliot Mountain Trail","Charles Savage Trail","Asticou Ridge Trail"]},
+ {id:"bald-mtn",n:"Bald Mountain",s:"Bald Mtn",o:null,e:409,p:null,lat:44.29433,lon:-68.38414,g:"western",lb:"l",pk:null,ext:1,
+  note:"The southwest shoulder of Bernard Mountain on the quiet side, crossed by the West Ledge Trail. Not to be confused with Bald Peak.",
+  t:["West Ledge Trail"]},
+ {id:"redfield",n:"Redfield Hill",s:"Redfield",o:null,e:300,est:1,p:null,lat:44.30836,lon:-68.24962,g:"preserve",lb:"r",pk:null,ext:1,
+  note:"A wooded hill above Little Long Pond in Seal Harbor, on Land & Garden Preserve trails. No published height; about 300 ft judging by its neighbours.",
+  t:["Redfield Hill Trail"]},
+ {id:"paradise",n:"Paradise Hill",s:"Paradise",o:null,e:290,p:null,lat:44.40529,lon:-68.24483,g:"cadillac",lb:"r",pk:null,ext:1,
+  note:"Near Hulls Cove at the north end of the park. The Paradise Hill carriage road loop circles it with views over Frenchman Bay, so you can walk or bike up.",
+  t:["Paradise Hill carriage road"]},
+ {id:"great-head",n:"Great Head",s:"Great Head",o:null,e:140,p:null,lat:44.32844,lon:-68.1748,g:"champlain",lb:"r",pk:null,ext:1,
+  note:"The headland east of Sand Beach, with its own summit marker and cliffs straight into the Atlantic. The Great Head Trail loops around it.",
+  t:["Great Head Trail"]}
+];
+let EXT_ON=false;try{EXT_ON=localStorage.getItem("acadia30-ext")==="1"}catch(e){}
+if(EXT_ON){P.push(...EXT);G.preserve={n:"Garden Preserve",tip:"Eliot Mountain and Redfield Hill on the Land & Garden Preserve's trails above Northeast and Seal Harbors. No bikes; dog rules vary by trail."}}
+const NP=P.length,NAME=`Acadia ${NP}`;
+const fmt=n=>n.toLocaleString("en-US");
 const BY = Object.fromEntries(P.map(p=>[p.id,p]));
 const rankE = [...P].sort((a,b)=>b.e-a.e).map(p=>p.id);
-const rankP = [...P].sort((a,b)=>b.p-a.p||b.e-a.e).map(p=>p.id);
+const rankP = [...P].sort((a,b)=>(b.p??-1)-(a.p??-1)||b.e-a.e).map(p=>p.id);
+const ft=p=>(p.est?"≈":"")+fmt(p.e);
 const TOP=1528;
 
 /* ---------- state ---------- */
@@ -750,7 +813,6 @@ for(const k in done) if(!BY[k]) delete done[k];
 const save=()=>{try{localStorage.setItem("acadia30",JSON.stringify(done))}catch(e){}};
 let hideDone=false; try{hideDone=localStorage.getItem("acadia30-hide")==="1"}catch(e){}
 const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
-const fmt=n=>n.toLocaleString("en-US");
 
 const BOUNDS={s:44.215,n:44.445,w:-68.44,e:-68.155};
 
@@ -782,7 +844,7 @@ let miles=0;ROUTE.features.forEach(f=>{const c=f.geometry.coordinates;for(let i=
 document.getElementById("routeLen").textContent=`About ${Math.round(miles)} miles of track.`;
 
 function peakData(){return{type:"FeatureCollection",features:P.map(p=>({type:"Feature",
-  properties:{id:p.id,name:p.n,label:p.s,ft:p.e,done:!!done[p.id],sel:p.id===selId,
+  properties:{id:p.id,name:p.n,label:p.s,ft:p.e,ftl:ft(p),done:!!done[p.id],sel:p.id===selId,
     dim:(hideDone&&!!done[p.id])||(!!focusGroup&&p.g!==focusGroup)},
   geometry:{type:"Point",coordinates:POS[p.id]}}))}}
 const matchedNames=()=>Object.values(OSM).map(v=>v[2]).filter(Boolean);
@@ -855,8 +917,8 @@ function buildStyle(){
       layout:{"icon-image":["case",["get","done"],"tri-d-"+th,"tri-t-"+th],"icon-size":["interpolate",["linear"],["zoom"],10,.72,14,1],"icon-allow-overlap":true,
         "symbol-sort-key":["-",["get","ft"]],
         "text-field":["step",["zoom"],
-          ["format",["get","label"],{"text-font":["literal",FB]},"\n",{},["concat",["number-format",["get","ft"],{}]," ft"],{"text-font":["literal",FR],"font-scale":.82}],
-          13.5,["format",["get","name"],{"text-font":["literal",FB]},"\n",{},["concat",["number-format",["get","ft"],{}]," ft"],{"text-font":["literal",FR],"font-scale":.82}]],
+          ["format",["get","label"],{"text-font":["literal",FB]},"\n",{},["concat",["get","ftl"]," ft"],{"text-font":["literal",FR],"font-scale":.82}],
+          13.5,["format",["get","name"],{"text-font":["literal",FB]},"\n",{},["concat",["get","ftl"]," ft"],{"text-font":["literal",FR],"font-scale":.82}]],
         "text-font":FB,"text-size":["interpolate",["linear"],["zoom"],10,10.5,14,12.5],"text-variable-anchor":["left","right","top","bottom"],
         "text-radial-offset":1.05,"text-justify":"auto","text-optional":true,"text-max-width":9},
       paint:{"text-color":c.ink,...halo,"icon-opacity":["case",["get","dim"],.22,1],"text-opacity":["case",["get","dim"],.2,1]}}
@@ -916,7 +978,7 @@ function renderCard(){
       <div class="cardbtns"><button data-act="open">Details</button><button data-act="clear">Clear</button></div>`;
   }else if(pinnedTrail){const ids=peaksOnTrail(pinnedTrail);
     card.innerHTML=`<h3>Selected trail</h3><b>${esc(pinnedTrail)}</b>
-      <p>${ids.length?"Acadia 30 summits on this trail:":"No Acadia 30 summit sits on the part of this trail loaded so far."}</p>
+      <p>${ids.length?`${NAME} summits on this trail:`:`No ${NAME} summit sits on the part of this trail loaded so far.`}</p>
       ${ids.length?`<div class="nbrs">${ids.map(id=>`<button data-peak="${id}">${done[id]?"✓ ":""}${esc(BY[id].n)}</button>`).join("")}</div>`:""}
       <div class="cardbtns"><button data-act="clear">Clear</button></div>`;
   }else card.innerHTML=`<h3>On the map</h3><p>Hover a trail to trace it. Tap a summit to highlight the trails that reach it, or tap a trail to see which summits it climbs.</p>`;
@@ -946,7 +1008,7 @@ function matchPeaks(){
   updateStatus();
 }
 function updateStatus(){const n=Object.keys(OSM).length;
-  statusEl.innerHTML=fallbackOn?"":`Summits placed from OpenStreetMap: <b>${n} of 30</b>.${n<30?" Zoom in near the others to look them up.":""} <button id="copyPos">Copy positions</button>`;
+  statusEl.innerHTML=fallbackOn?"":`Summits placed from OpenStreetMap: <b>${n} of ${NP}</b>.${n<NP?" Zoom in near the others to look them up.":""} <button id="copyPos">Copy positions</button>`;
   const b=document.getElementById("copyPos");if(b)b.onclick=()=>{const out={};for(const p of P)out[p.id]={lat:+POS[p.id][1].toFixed(6),lon:+POS[p.id][0].toFixed(6),osm:OSM[p.id]?OSM[p.id][2]:null};
     const txt=JSON.stringify(out,null,1);
     (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>{b.textContent="Copied"},()=>{b.textContent="Copy failed"})}}
@@ -978,7 +1040,7 @@ function createMainMap(){
     if(hn!==hoverName){hoverName=hn;setFilters()}
     if(pk){const p=BY[pk.properties.id];tip(e.point,`<b>${esc(p.n)}</b><span class="mono">${fmt(p.e)} ft</span> · ${done[p.id]?"Summited":"Still to climb"}`)}
     else if(op){const ft=op.properties.ele_ft||(op.properties.ele?Math.round(op.properties.ele*3.28084):null);
-      tip(e.point,`<b>${esc(op.properties.name)}</b>${ft?`<span class="mono">${fmt(ft)} ft</span> · `:""}Not on the Acadia 30 list`)}
+      tip(e.point,`<b>${esc(op.properties.name)}</b>${ft?`<span class="mono">${fmt(ft)} ft</span> · `:""}Not on the ${NAME} list`)}
     else if(tr)tip(e.point,`<b>${esc(tr.properties.name)}</b>${tr.properties.class==="track"?"Carriage road or track":"Trail"} · tap to select`);
     else tipHide();
   });
@@ -1007,7 +1069,7 @@ else{
   const ls=id==="showRoute"?["route-w","route-e"]:["contour","contour-lbl"];
   ls.forEach(l=>lay(l,()=>map.setLayoutProperty(l,"visibility",e.target.checked?"visible":"none")))});
 const focusSel=document.getElementById("mapFocus");
-focusSel.innerHTML=`<option value="">All 30 peaks</option>`+Object.keys(G).map(g=>`<option value="${g}">${esc(G[g].n)}</option>`).join("");
+focusSel.innerHTML=`<option value="">All ${NP} peaks</option>`+Object.keys(G).map(g=>`<option value="${g}">${esc(G[g].n)}</option>`).join("");
 function focusOuting(g){focusGroup=g;focusSel.value=g;updatePeaks();if(!map)return;
   const pts=g?P.filter(p=>p.g===g).map(p=>POS[p.id]):[[BOUNDS.w,BOUNDS.s],[BOUNDS.e,BOUNDS.n]];
   const b=pts.reduce((bb,c)=>bb.extend(c),new maplibregl.LngLatBounds(pts[0],pts[0]));
@@ -1029,7 +1091,9 @@ const SHAPES={
  acadia:[88,84,"plateau","plateau"], sauveur:[55,38,"dome","cliff"], beechcliff:[50,24,"shoulder","cliff"],
  conners:[35,30,"dome","bubble"], day:[60,60,"dome","dome"], beehive:[40,20,"shoulder","cliff"],
  gorham:[66,54,"plateau","shoulder"], valley:[40,36,"dome","shoulder"], kebo:[46,44,"dome","dome"],
- flying:[30,30,"cone","dome"]
+ flying:[30,30,"cone","dome"],
+ "eagles-crag":[38,28,"shoulder","cliff"], eliot:[55,48,"dome","dome"], "bald-mtn":[52,46,"dome","dome"],
+ redfield:[44,44,"dome","dome"], paradise:[58,52,"dome","dome"], "great-head":[40,26,"plateau","cliff"]
 };
 const WS=.62; // width scale for all outlines
 const FLANK={dome:[2,1.5],cone:[1,1.2],plateau:[3.2,2.2],cliff:[1,2.6],shoulder:[1.4,1],bubble:[2.2,.85]};
@@ -1096,7 +1160,7 @@ const gMax=gid=>Math.max(...P.filter(p=>p.g===gid).map(p=>p.e));
     if(id==="sbubble"){const q=pts[SN+20];mk("circle",{cx:q[0].toFixed(1),cy:(CH.G-q[1]*CH.K-3.2).toFixed(1),r:3.2,class:"glyph"},g)}
     mk("line",{x1:0,x2:0,y1:sy-2-off,y2:sy-9-off,class:"lead"},g);
     const t=mk("text",{transform:`translate(1.5 ${(sy-11-off).toFixed(1)}) rotate(-50)`,class:"lbl"},g);
-    t.appendChild(document.createTextNode(p.s+" "));mk("tspan",{class:"lft"},t).textContent=fmt(p.e);
+    t.appendChild(document.createTextNode(p.s+" "));mk("tspan",{class:"lft"},t).textContent=ft(p);
     g.addEventListener("click",()=>openPeak(id));
     g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openPeak(id)}});
     chartEls[id]=g}
@@ -1112,8 +1176,8 @@ function drawGroupLabels(){
 function layoutChart(mode){
   chartMode=mode==="group"?"group":"height";
   const xs={};
-  if(chartMode==="height"){const step=(CH.R-CH.L)/29;rankE.forEach((id,i)=>xs[id]=CH.L+i*step)}
-  else{const gids=Object.keys(G).sort((a,b)=>gMax(b)-gMax(a)),gap=1.7,slot=(CH.R-CH.L)/(29+(gids.length-1)*gap);let x=CH.L;groupSpans=[];
+  if(chartMode==="height"){const step=(CH.R-CH.L)/(NP-1);rankE.forEach((id,i)=>xs[id]=CH.L+i*step)}
+  else{const gids=Object.keys(G).sort((a,b)=>gMax(b)-gMax(a)),gap=1.7,slot=(CH.R-CH.L)/((NP-1)+(gids.length-1)*gap);let x=CH.L;groupSpans=[];
     gids.forEach(gid=>{const mem=P.filter(p=>p.g===gid).sort((a,b)=>b.e-a.e),x0=x;mem.forEach(p=>{xs[p.id]=x;x+=slot});groupSpans.push([gid,x0,x-slot]);x+=gap*slot});
     drawGroupLabels()}
   const order=chartMode==="height"?rankE:Object.keys(xs).sort((a,b)=>xs[a]-xs[b]);
@@ -1138,14 +1202,15 @@ function layoutLedger(mode,animate){
   const order=mode==="height"?rankE:rankP;const first={};
   if(animate&&!RM)for(const id of order)first[id]=rows[id].getBoundingClientRect().top;
   order.forEach((id,i)=>{const r=rows[id],p=BY[id];ledger.appendChild(r);r.querySelector(".rank").textContent=i+1;
-    const v=mode==="height"?p.e:p.p;r.querySelector(".bar i").style.width=(v/TOP*100)+"%";r.querySelector(".vl").textContent=fmt(v)+" ft"});
+    const v=mode==="height"?p.e:p.p;r.querySelector(".bar i").style.width=((v||0)/TOP*100)+"%";r.querySelector(".vl").textContent=v==null?"—":(mode==="height"?ft(p):fmt(v))+" ft"});
   if(animate&&!RM)order.forEach((id,i)=>{const r=rows[id];const dy=first[id]-r.getBoundingClientRect().top;
     if(dy)r.animate([{transform:`translateY(${dy}px)`},{transform:"none"}],{duration:650,delay:Math.min(i*14,300),easing:"cubic-bezier(.2,.8,.2,1)",fill:"backwards"})});
   document.getElementById("ledgerTitle").textContent=mode==="height"?"By height":"By prominence";
   document.getElementById("ledgerSub").textContent=mode==="height"
-    ?"All 30 summits by elevation above sea level. Bars share one scale, 0 to 1,528 ft."
+    ?`All ${NP} summits by elevation above sea level. Bars share one scale, 0 to 1,528 ft.`
     :"How much each summit stands on its own. Bernard jumps to second; Gilmore and Valley Peak barely register.";
   document.getElementById("promNote").hidden=mode!=="prominence";
+  if(EXT_ON)document.getElementById("promNote").textContent="Prominence is how far a summit rises above the lowest saddle connecting it to higher ground. Figures are Peakery's. The six Other Peaks have no published prominence, so they sit at the bottom.";
 }
 
 /* ---------- groups ---------- */
@@ -1155,14 +1220,14 @@ for(const gid in G){const mem=P.filter(p=>p.g===gid).sort((a,b)=>b.e-a.e);const 
   mem.forEach((p,i)=>{sil+=`<path data-id="${p.id}" d="${silD(p,W,H,.62,50/1528,slot*(i+.5))}"/>`});
   c.innerHTML=`<header><h3>${G[gid].n}</h3><span class="cnt mono"></span></header>
     <svg class="gsil" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${sil}</svg><div class="gbar"><i></i></div><p>${G[gid].tip}</p><button class="gmap" data-g="${gid}">Show on map</button>
-    <ul>${mem.map(p=>`<li data-id="${p.id}"><button class="chk" aria-pressed="false" aria-label="Mark ${p.n} summited">${tick}</button><button class="nm"><b>${p.n}</b></button><span class="mono" style="font-size:13px;color:var(--muted)">${fmt(p.e)}</span></li>`).join("")}</ul>`;
+    <ul>${mem.map(p=>`<li data-id="${p.id}"><button class="chk" aria-pressed="false" aria-label="Mark ${p.n} summited">${tick}</button><button class="nm"><b>${p.n}</b></button><span class="mono" style="font-size:13px;color:var(--muted)">${ft(p)}</span></li>`).join("")}</ul>`;
   grpCards[gid]=c;groupsEl.appendChild(c)}
 
 /* ---------- paint ---------- */
 function paint(){
   const n=Object.keys(done).length;
   document.getElementById("ringNum").textContent=n;
-  document.getElementById("ringVal").setAttribute("stroke-dashoffset",(301.6*(1-n/30)).toFixed(1));
+  document.getElementById("ringVal").setAttribute("stroke-dashoffset",(301.6*(1-n/NP)).toFixed(1));
   document.getElementById("stFeet").textContent=fmt(P.filter(p=>done[p.id]).reduce((s,p)=>s+p.e,0))+" ft";
   const hi=rankE.find(id=>done[id]);document.getElementById("stHigh").textContent=hi?BY[hi].s:"—";
   let gdone=0;
@@ -1171,14 +1236,14 @@ function paint(){
     c.classList.toggle("complete",k===mem.length);if(k===mem.length)gdone++;
     c.querySelectorAll(".gsil path").forEach(pa=>pa.classList.toggle("todo",!done[pa.dataset.id]));
     c.querySelectorAll("li").forEach(li=>{li.querySelector(".chk").setAttribute("aria-pressed",!!done[li.dataset.id]);li.hidden=hideDone&&!!done[li.dataset.id]})}
-  document.getElementById("stGroups").textContent=`${gdone} / 9`;
+  document.getElementById("stGroups").textContent=`${gdone} / ${Object.keys(G).length}`;
   for(const id in rows){const r=rows[id];r.querySelector(".chk").setAttribute("aria-pressed",!!done[id]);r.classList.toggle("isdone",!!done[id]);r.classList.toggle("hide",hideDone&&!!done[id])}
   updatePeaks();if(selId||pinnedTrail)renderCard();
   for(const id in chartEls){chartEls[id].classList.toggle("done",!!done[id]);chartEls[id].classList.toggle("dim",hideDone&&!!done[id])}
   if(chartMode==="group")drawGroupLabels();
   const nl=document.getElementById("nextList");nl.innerHTML="";
   rankE.filter(id=>!done[id]).slice(0,5).forEach(id=>{const b=document.createElement("button");b.innerHTML=`<span>${BY[id].n}</span><span class="mono">${fmt(BY[id].e)}</span>`;b.onclick=()=>openPeak(id);nl.appendChild(b)});
-  if(!nl.children.length)nl.innerHTML='<p style="margin:0;font-size:14px">All 30 summited. That\'s the full challenge.</p>';
+  if(!nl.children.length)nl.innerHTML=`<p style="margin:0;font-size:14px">All ${NP} summited. That's the full challenge.</p>`;
   if(current)fillDrawer(current);
 }
 function toggle(id,on,origin){
@@ -1192,21 +1257,21 @@ function toggle(id,on,origin){
 let current=null,lastFocus=null;
 const drawer=document.getElementById("drawer"),scrim=document.getElementById("scrim");
 function fillDrawer(id){const p=BY[id];
-  document.getElementById("dGroup").textContent=G[p.g].n+" · Mount Desert Island";
+  document.getElementById("dGroup").textContent=G[p.g].n+(p.ext?" · Other Peaks extension":" · Mount Desert Island");
   document.getElementById("dName").textContent=p.n;
   document.getElementById("dOld").textContent=p.o?`Formerly ${p.o}`:"";
   document.getElementById("dSil").innerHTML=(id!=="cadillac"?`<path class="ghost" d="${silD(BY.cadillac,300,90,1.3,80/1528,150)}"/><text x="6" y="12">CADILLAC FOR SCALE</text>`:"")+`<path d="${silD(p,300,90,1.3,80/1528,150)}"/>`;
-  document.getElementById("dElev").innerHTML=`${fmt(p.e)}<span> ft</span>`;
-  document.getElementById("dProm").innerHTML=`${fmt(p.p)}<span> ft</span>`;
-  document.getElementById("dRankE").innerHTML=`${rankE.indexOf(id)+1}<span> of 30</span>`;
-  document.getElementById("dRankP").innerHTML=`${rankP.indexOf(id)+1}<span> of 30</span>`;
+  document.getElementById("dElev").innerHTML=`${ft(p)}<span> ft${p.est?" est.":""}</span>`;
+  document.getElementById("dProm").innerHTML=p.p==null?`—<span> not published</span>`:`${fmt(p.p)}<span> ft</span>`;
+  document.getElementById("dRankE").innerHTML=`${rankE.indexOf(id)+1}<span> of ${NP}</span>`;
+  document.getElementById("dRankP").innerHTML=p.p==null?`—<span> not published</span>`:`${rankP.indexOf(id)+1}<span> of ${P.filter(q=>q.p!=null).length}</span>`;
   const b=document.getElementById("dCheck");b.setAttribute("aria-pressed",!!done[id]);
   b.innerHTML=done[id]?`<svg width="20" height="20" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2.4" fill="none"><path d="M3 8.5 L6.5 12 L13 4.5"/></svg> Summited`:"Mark summited";
   const dd=document.getElementById("dDate");dd.value=done[id]||"";dd.disabled=!done[id];
   document.getElementById("dNote").textContent=p.note;
   document.getElementById("dTrails").innerHTML=p.t.map(t=>`<li>${t}</li>`).join("");
   const q=encodeURIComponent(`${p.n} Acadia Maine`);
-  document.getElementById("dLinks").innerHTML=`<a href="https://en.wikipedia.org/w/index.php?search=${q}" target="_blank" rel="noopener">Wikipedia ↗</a><a href="https://peakery.com/${p.pk}/" target="_blank" rel="noopener">Peakery ↗</a><button id="dMap">Show on map</button>`;
+  document.getElementById("dLinks").innerHTML=`<a href="https://en.wikipedia.org/w/index.php?search=${q}" target="_blank" rel="noopener">Wikipedia ↗</a>${p.pk?`<a href="https://peakery.com/${p.pk}/" target="_blank" rel="noopener">Peakery ↗</a>`:""}<button id="dMap">Show on map</button>`;
   document.getElementById("dMap").onclick=()=>{closePeak();setView("map");document.getElementById("map").scrollIntoView({block:"center",behavior:RM?"auto":"smooth"});selectOnMap(id,true)};
   const nb=document.getElementById("dNbrs");nb.innerHTML="";
   P.filter(o=>o.g===p.g&&o.id!==id).forEach(o=>{const bb=document.createElement("button");bb.textContent=(done[o.id]?"✓ ":"")+o.n;bb.onclick=()=>openPeak(o.id);nb.appendChild(bb)});
@@ -1224,7 +1289,16 @@ document.addEventListener("click",e=>{
   const chk=e.target.closest(".row .chk, .grp .chk");if(chk){toggle(chk.closest("[data-id]").dataset.id,undefined,chk);return}
   const gm=e.target.closest(".gmap");if(gm){setView("map");focusOuting(gm.dataset.g);document.getElementById("map").scrollIntoView({block:"center",behavior:RM?"auto":"smooth"});return}
   const nm=e.target.closest(".row .nm, .grp .nm");if(nm)openPeak(nm.closest("[data-id]").dataset.id)});
-window.ACADIA30={P,G,BY,rankE,getDone:()=>done,buildStyle,makeTri,POS,ROUTE,hasLibs,miles:Math.round(miles),silD};
+(function applyPreset(){
+  document.querySelector("h1").innerHTML=EXT_ON?`<span>Full 30 + The Other Peaks</span>${NAME.replace(" ","&nbsp;")}`:`<span>The Full 30 Peak Challenge</span>Acadia&nbsp;30`;
+  if(EXT_ON)document.querySelector(".lede").textContent=`Peakery's Full 30 plus ${NP-30} more named summits with a public trail or carriage road to the top, all on Mount Desert Island. Tap a peak to read about it and log your summit.`;
+  document.getElementById("ringOf").textContent=`OF ${NP}`;
+  document.getElementById("heights").setAttribute("aria-label",`Silhouettes of the ${NP} peaks, drawn to scale`);
+  document.getElementById("map").setAttribute("aria-label",`Map of Mount Desert Island with ${NP} peaks`);
+  document.getElementById("keyPeak").textContent=`${NAME} summit, still to climb`;
+  document.title=NAME;
+})();
+window.ACADIA30={P,G,BY,rankE,EXT,EXT_ON,NP,getDone:()=>done,buildStyle,makeTri,POS,ROUTE,hasLibs,miles:Math.round(miles),silD};
 const hd=document.getElementById("hideDone");hd.checked=hideDone;
 hd.onchange=()=>{hideDone=hd.checked;try{localStorage.setItem("acadia30-hide",hideDone?"1":"0")}catch(e){}paint()};
 
@@ -1259,5 +1333,6 @@ paint();
 
 <script src="app.js"></script>
 <script src="intro.js"></script>
+<script src="others.js"></script>
 </body>
 </html>
