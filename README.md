@@ -5,6 +5,7 @@ A tracker for the Acadia National Park Full 30 Peak Challenge (Peakery's list). 
 - **Comparative heights chart** in the style of Johnson's 1860s mountain charts, sorted by height or grouped by outing
 - **Trail map**: OpenStreetMap trails and summits drawn in the site's own style, over shaded relief and contours (in feet) from USGS elevation data. Hover a trail to trace it; tap a summit to highlight the trails that reach it.
 - **Rankings** by elevation and prominence, nine suggested outings, and a check-off list with summit dates
+- **Animated introduction** to the park, the challenge and the route, built from the site's own chart and map. It plays once; *Replay intro* in the footer brings it back.
 - **Installable app with an offline copy**: footer → *Download as app*. "Save offline copy" stores the page and the island's map (about 25 MB) for use with no signal.
 
 It's static files with no build step, no server and no tracking. Checkmarks are saved only in each visitor's own browser.
@@ -15,6 +16,7 @@ It's static files with no build step, no server and no tracking. Checkmarks are 
 | --- | --- |
 | `index.html` | The whole page: data, styles and script |
 | `app.js` | Install prompt, offline copy, CSV downloads |
+| `intro.js` | The animated introduction |
 | `sw.js` | Service worker that serves the site and saved map tiles offline |
 | `manifest.webmanifest`, icons | App name and icons for installing |
 | `vendor/` | MapLibre GL JS 4.7.1, maplibre-contour 0.1.0 and the fonts, with their licenses |

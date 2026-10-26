@@ -276,6 +276,61 @@ footer{border-top:1px solid var(--line);padding-block:22px 32px;font-size:13px;c
 .foot-links{display:flex;flex-wrap:wrap;gap:8px}
 .flink{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;border:1px solid var(--ink);padding:7px 12px;border-radius:var(--r);background:var(--surface)}
 .flink:hover{background:var(--ink);color:var(--bg)}
+/* intro */
+html.intro-open,html.intro-open body{overflow:hidden}
+.intro{position:fixed;inset:0;z-index:5000;background:var(--band);color:var(--band-ink);overflow:hidden;transition:opacity .45s}
+.intro.out{opacity:0}
+.intro-map{position:absolute;inset:0;opacity:0;transition:opacity 1s}
+.intro.mapon .intro-map{opacity:1}
+.intro-map .maplibregl-ctrl-attrib{font-size:10px}
+.intro-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,var(--band) 0%,color-mix(in srgb,var(--band) 85%,transparent) 30%,color-mix(in srgb,var(--band) 0%,transparent) 64%)}
+.intro-stage{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 70px);bottom:44%;display:grid;place-items:center;pointer-events:none;
+  padding-inline:max(20px,env(safe-area-inset-left,0px)) max(20px,env(safe-area-inset-right,0px))}
+.intro-range{width:min(1120px,100%);height:100%;overflow:visible}
+.intro-range path.rise{fill:var(--band-ink);stroke:var(--band);stroke-width:1.6;stroke-linejoin:round;transform-box:fill-box;transform-origin:50% 100%;animation:introRise 1.2s cubic-bezier(.2,.8,.2,1) both}
+.intro-range .sea path{stroke:var(--band-ink);stroke-width:1.2;fill:none}
+@keyframes introRise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.intro-chartwrap{width:min(1080px,100%,calc((56vh - 96px) * 2.35));background:var(--surface);border:3px double var(--ink);padding:4px;animation:introSweep 3.4s cubic-bezier(.45,0,.2,1) .2s both}
+.intro-chart{display:block;width:100%;height:auto;min-width:0}
+@keyframes introSweep{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.intro-go{display:grid;justify-items:center;gap:6px;animation:introUp .9s cubic-bezier(.2,.8,.2,1) both}
+.intro-go svg{width:64px;height:76px}
+.intro-go b{font-family:var(--f-display);font-weight:900;font-size:clamp(72px,14vw,150px);line-height:.85}
+.intro-go b span{font-weight:500;font-size:.4em;color:var(--band-muted)}
+.intro-go small{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--band-muted)}
+.intro-skip{position:absolute;z-index:2;top:calc(env(safe-area-inset-top,0px) + 16px);right:max(16px,env(safe-area-inset-right,0px));display:inline-flex;gap:8px;align-items:center;
+  font-size:13px;font-weight:600;color:var(--band-ink);border:1px solid color-mix(in srgb,var(--band-ink) 45%,transparent);border-radius:999px;padding:7px 14px;background:color-mix(in srgb,var(--band) 70%,transparent)}
+.intro-skip:hover{border-color:var(--band-ink)}
+.intro-skip kbd{font-family:var(--f-mono);font-size:10px;color:var(--band-muted);border:1px solid color-mix(in srgb,var(--band-ink) 30%,transparent);border-radius:3px;padding:0 4px}
+.intro-cap{position:absolute;z-index:2;left:0;bottom:0;width:min(720px,100%);display:grid;gap:10px;
+  padding:0 max(20px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 28px) max(24px,env(safe-area-inset-left,0px))}
+@media (min-width:900px){.intro-cap{left:calc((100vw - min(1180px,100vw - 48px))/2);padding-left:0}}
+.intro-eyebrow{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--band-muted)}
+.intro-cap h2{font-family:var(--f-display);font-weight:900;font-size:clamp(52px,9.5vw,118px);line-height:.84;text-transform:uppercase;margin:0;text-wrap:balance}
+.intro-cap p{margin:0;font-size:16px;line-height:1.55;max-width:56ch;color:color-mix(in srgb,var(--band-ink) 88%,transparent)}
+.intro-cap.in>*{animation:introUp .7s cubic-bezier(.2,.8,.2,1) both}
+.intro-cap.in>:nth-child(2){animation-delay:.06s}.intro-cap.in>:nth-child(3){animation-delay:.14s}.intro-cap.in>:nth-child(4){animation-delay:.2s}
+@keyframes introUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.intro-extra{display:grid;gap:2px;min-height:0}
+.intro-extra:empty{display:none}
+.intro-extra b{font-family:var(--f-display);font-size:26px;text-transform:uppercase;letter-spacing:.03em;line-height:1}
+.intro-extra span{font-size:13px;color:var(--band-muted)}
+.intro-chip{font-family:var(--f-mono);font-size:11px!important}
+.intro-nav{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px}
+.intro-back{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--band-ink) 40%,transparent);color:var(--band-ink)}
+.intro-back:disabled{opacity:.3;cursor:default}
+.intro-dots{display:flex;gap:6px}
+.intro-dot{width:26px;height:18px;display:grid;align-items:center;padding:0}
+.intro-dot i{display:block;height:3px;background:color-mix(in srgb,var(--band-ink) 25%,transparent);position:relative;overflow:hidden}
+.intro-dot i::after{content:"";position:absolute;inset:0;background:var(--band-ink);transform:scaleX(0);transform-origin:0 50%}
+.intro-dot.past i::after{transform:none}
+.intro-dot.on i::after{animation:introFill var(--d) linear forwards}
+@keyframes introFill{to{transform:none}}
+.ibtn{font-family:var(--f-display);font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase;padding:9px 18px;border-radius:var(--r);border:1.5px solid var(--band-ink);color:var(--band-ink)}
+.ibtn.primary{background:var(--band-ink);color:var(--band)}
+.ibtn:hover{opacity:.9}
+@media (max-width:640px){.intro-stage{bottom:50%}.intro-chartwrap{width:min(100%,calc((50vh - 96px) * 2.35))}.intro-cap p{font-size:15px}.intro-dot{width:18px}}
+
 /* dialogs */
 .dlg{border:0;padding:0;background:var(--surface);color:var(--ink);border-radius:6px;width:min(620px,calc(100vw - 24px));max-height:calc(100dvh - 40px);overflow:hidden;display:flex;flex-direction:column}
 .dlg:not([open]){display:none}
@@ -448,6 +503,7 @@ progress{width:100%;height:8px;accent-color:var(--ink)}
   <div class="wrap foot">
     <div class="foot-brand"><b>Acadia 30</b><span>A peakbagger's tracker for Peakery's Acadia Full 30 Peak Challenge. Your checkmarks stay on this device.</span></div>
     <nav class="foot-links" aria-label="More">
+      <button class="flink" data-intro>Replay intro</button>
       <button class="flink" data-dialog="dlgApp">Download as app</button>
       <button class="flink" data-dialog="dlgData">Sources &amp; data</button>
       <a class="flink" href="https://github.com/wdenning/acadia-30" target="_blank" rel="noopener">GitHub ↗</a>
@@ -523,6 +579,25 @@ progress{width:100%;height:8px;accent-color:var(--ink)}
     </ul></section>
   </div>
 </dialog>
+
+<div class="intro" id="intro" hidden role="dialog" aria-modal="true" aria-labelledby="introTitle" aria-describedby="introBody">
+  <div class="intro-map" id="introMap" aria-hidden="true"></div>
+  <div class="intro-shade" aria-hidden="true"></div>
+  <div class="intro-stage" id="introStage" aria-hidden="true"></div>
+  <button class="intro-skip" id="introSkip">Skip intro <kbd>Esc</kbd></button>
+  <div class="intro-cap">
+    <div class="intro-eyebrow" id="introEyebrow"></div>
+    <h2 id="introTitle"></h2>
+    <p id="introBody"></p>
+    <div class="intro-extra" id="introExtra" aria-live="polite"></div>
+    <div class="intro-nav">
+      <button class="intro-back" id="introBack" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 3 L5 9 L11 15"/></svg></button>
+      <div class="intro-dots" id="introDots"></div>
+      <button class="ibtn primary" id="introNext">Next</button>
+      <button class="ibtn" id="introOffline" hidden>Save map for offline</button>
+    </div>
+  </div>
+</div>
 
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-hidden="true" aria-labelledby="dName" role="dialog">
@@ -1140,7 +1215,7 @@ document.addEventListener("click",e=>{
   const chk=e.target.closest(".row .chk, .grp .chk");if(chk){toggle(chk.closest("[data-id]").dataset.id,undefined,chk);return}
   const gm=e.target.closest(".gmap");if(gm){setView("map");focusOuting(gm.dataset.g);document.getElementById("map").scrollIntoView({block:"center",behavior:RM?"auto":"smooth"});return}
   const nm=e.target.closest(".row .nm, .grp .nm");if(nm)openPeak(nm.closest("[data-id]").dataset.id)});
-window.ACADIA30={P,G,BY,getDone:()=>done};
+window.ACADIA30={P,G,BY,rankE,getDone:()=>done,buildStyle,makeTri,POS,ROUTE,hasLibs,miles:Math.round(miles),silD};
 const hd=document.getElementById("hideDone");hd.checked=hideDone;
 hd.onchange=()=>{hideDone=hd.checked;try{localStorage.setItem("acadia30-hide",hideDone?"1":"0")}catch(e){}paint()};
 
@@ -1174,5 +1249,6 @@ paint();
 </script>
 
 <script src="app.js"></script>
+<script src="intro.js"></script>
 </body>
 </html>
