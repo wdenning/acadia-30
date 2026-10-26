@@ -1,5 +1,5 @@
 /* Acadia 30 service worker: keeps the site and saved map tiles available offline. */
-const VERSION="2026-10-26c";
+const VERSION="2026-10-26d";
 const SHELL="acadia30-shell-"+VERSION,OFF="acadia30-offline-v1",RT="acadia30-runtime-v1";
 const SHELL_FILES=["./","index.html","app.js","intro.js","fonts.css","manifest.webmanifest","favicon.svg","favicon-32.png","apple-touch-icon.png","icon-192.png","icon-512.png","icon-maskable-512.png","vendor/maplibre-gl.js","vendor/maplibre-gl.css","vendor/maplibre-contour.min.js","vendor/fonts/big-shoulders-display-latin-500-normal.woff2","vendor/fonts/big-shoulders-display-latin-700-normal.woff2","vendor/fonts/big-shoulders-display-latin-900-normal.woff2","vendor/fonts/public-sans-latin-400-normal.woff2","vendor/fonts/public-sans-latin-400-italic.woff2","vendor/fonts/public-sans-latin-500-normal.woff2","vendor/fonts/public-sans-latin-600-normal.woff2","vendor/fonts/public-sans-latin-700-normal.woff2","vendor/fonts/ibm-plex-mono-latin-400-normal.woff2","vendor/fonts/ibm-plex-mono-latin-500-normal.woff2"];
 const TILE_HOSTS=["tiles.openfreemap.org","elevation-tiles-prod.s3.amazonaws.com"];

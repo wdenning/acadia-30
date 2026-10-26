@@ -307,6 +307,7 @@ html.intro-open,html.intro-open body{overflow:hidden}
 @media (min-width:900px){.intro-cap{left:calc((100vw - min(1180px,100vw - 48px))/2);padding-left:0}}
 .intro-eyebrow{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--band-muted)}
 .intro-cap h2{font-family:var(--f-display);font-weight:900;font-size:clamp(52px,9.5vw,118px);line-height:.84;text-transform:uppercase;margin:0;text-wrap:balance}
+.intro-cap p:empty{display:none}
 .intro-cap p{margin:0;font-size:16px;line-height:1.55;max-width:56ch;color:color-mix(in srgb,var(--band-ink) 88%,transparent)}
 .intro-cap.in>*{animation:introUp .7s cubic-bezier(.2,.8,.2,1) both}
 .intro-cap.in>:nth-child(2){animation-delay:.06s}.intro-cap.in>:nth-child(3){animation-delay:.14s}.intro-cap.in>:nth-child(4){animation-delay:.2s}
@@ -828,8 +829,8 @@ function buildStyle(){
     {id:"trail-hover",type:"line",source:"omt","source-layer":"transportation_name",filter:nameIn(hoverName?[hoverName]:[]),layout:{"line-cap":"round","line-join":"round"},
       paint:{"line-color":c.ink,"line-opacity":.45,"line-width":["interpolate",["linear"],["zoom"],11,3,16,7]}},
     {id:"trail-hit",type:"line",source:"omt","source-layer":"transportation_name",filter:TRAILCLS,minzoom:11.5,paint:{"line-color":"rgba(0,0,0,0)","line-width":14}},
-    {id:"route-w",type:"line",source:"route",filter:["==",["get","leg"],0],layout:{visibility:vis("showRoute"),"line-cap":"round"},paint:{"line-color":c.ink,"line-width":2.6,"line-dasharray":[.2,2]}},
-    {id:"route-e",type:"line",source:"route",filter:["==",["get","leg"],1],layout:{visibility:vis("showRoute")},paint:{"line-color":c.ink,"line-width":2.2,"line-dasharray":[3,1.6]}},
+    {id:"route-w",type:"line",source:"route",filter:["==",["get","leg"],1],layout:{visibility:vis("showRoute"),"line-cap":"round"},paint:{"line-color":c.ink,"line-width":2.6,"line-dasharray":[.2,2]}},
+    {id:"route-e",type:"line",source:"route",filter:["==",["get","leg"],0],layout:{visibility:vis("showRoute")},paint:{"line-color":c.ink,"line-width":2.2,"line-dasharray":[3,1.6]}},
     {id:"contour-lbl",type:"symbol",source:"contours","source-layer":"contours",filter:[">",["get","level"],0],minzoom:12,
       layout:{visibility:vis("showContours"),"symbol-placement":"line","text-size":9.5,"text-font":FR,"text-field":["concat",["number-format",["get","ele"],{}],"′"]},
       paint:{"text-color":c.muted,...halo}},
@@ -952,7 +953,8 @@ function updateStatus(){const n=Object.keys(OSM).length;
 function goFallback(msg){if(fallbackOn||!map)return;fallbackOn=true;note.innerHTML=msg;note.hidden=false;map.setStyle(buildStyle());updateStatus()}
 window.__acadiaMap=()=>map;
 
-if(hasLibs){
+function createMainMap(){
+  if(map||!hasLibs)return;
   map=new maplibregl.Map({container:"map",style:buildStyle(),bounds:[[BOUNDS.w,BOUNDS.s],[BOUNDS.e,BOUNDS.n]],fitBoundsOptions:{padding:16},
     minZoom:9.5,maxZoom:17,maxBounds:[[BOUNDS.w-.25,BOUNDS.s-.18],[BOUNDS.e+.25,BOUNDS.n+.18]],
     cooperativeGestures:true,dragRotate:false,pitchWithRotate:false,attributionControl:false});
@@ -992,7 +994,14 @@ if(hasLibs){
   const restyle=()=>{clearTimeout(restyle.t);restyle.t=setTimeout(()=>map.setStyle(buildStyle(),{diff:true}),60)};
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change",restyle);
   new MutationObserver(restyle).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
-}else{note.innerHTML="<b>Map library didn't load</b>Refresh the page to try again.";note.hidden=false}
+}
+if(!hasLibs){note.innerHTML="<b>Map library didn't load</b>Refresh the page to try again.";note.hidden=false}
+else{
+  // While the first-visit intro plays, hold the main map back so the two don't compete for the GPU.
+  let introPending=false;try{introPending=localStorage.getItem("acadia30-intro-seen")!=="1"&&!/^#(app|data)$/.test(location.hash)}catch(e){}
+  if(introPending){addEventListener("acadia30:introclosed",createMainMap,{once:true});setTimeout(createMainMap,90000)}
+  else createMainMap();
+}
 
 ["showRoute","showContours"].forEach(id=>document.getElementById(id).onchange=e=>{
   const ls=id==="showRoute"?["route-w","route-e"]:["contour","contour-lbl"];
