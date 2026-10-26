@@ -1,0 +1,1483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://basemap.nationalmap.gov https://*.tile.opentopomap.org; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="Peakbagger's tracker for the Acadia National Park Full 30 Peak Challenge: comparative heights chart, topo map, rankings and check-offs.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Acadia 30 Peaks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;900&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+
+.leaflet-tile::selection {
+	background: transparent;
+}
+
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+
+
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; 
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; 
+	pointer-events: auto;
+	}
+
+
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url(images/layers.png);
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url(images/layers-2x.png);
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+
+.leaflet-default-icon-path { 
+	background-image: url(images/marker-icon.png);
+	}
+
+
+
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+
+
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+
+
+@media print {
+	
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+</style>
+<style>
+/* Layout: black NPS-style band (title + progress), sticky view tabs, then one of four views —
+   Leaflet map of the real coastline with modeled relief + the traverse route, ranked height ledger,
+   ranked prominence ledger, outing groups. A peak drawer slides in from the right.
+   Monochrome spruce-granite, one hue throughout. */
+:root{
+  --bg:#E6EAE5; --surface:#F2F4F0; --ink:#17201B; --muted:#56655B; --line:#BAC4BB;
+  --accent:#2D4A3A; --band:#141B17; --band-ink:#E6EAE5; --band-muted:#94A39A;
+  --water:#D2DAD3; --land:#EDF0EB; --hill:#17201B; --done:#17201B; --done-ink:#E6EAE5;
+  --tiles:grayscale(1) sepia(.28) hue-rotate(70deg) saturate(.55) contrast(1.06) brightness(1.02);
+  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:4px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1411; --surface:#151D19; --ink:#DCE4DD; --muted:#8B9A90; --line:#2C3832;
+  --accent:#A8C3B1; --band:#070A08; --band-ink:#DCE4DD; --band-muted:#7E8D84;
+  --water:#0A0F0C; --land:#1A241F; --hill:#000000; --done:#DCE4DD; --done-ink:#0E1411;
+  --tiles:invert(1) grayscale(1) sepia(.25) hue-rotate(70deg) saturate(.5) brightness(.82) contrast(1.12); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1411; --surface:#151D19; --ink:#DCE4DD; --muted:#8B9A90; --line:#2C3832;
+  --accent:#A8C3B1; --band:#070A08; --band-ink:#DCE4DD; --band-muted:#7E8D84;
+  --water:#0A0F0C; --land:#1A241F; --hill:#000000; --done:#DCE4DD; --done-ink:#0E1411;
+  --tiles:invert(1) grayscale(1) sepia(.25) hue-rotate(70deg) saturate(.5) brightness(.82) contrast(1.12); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:1001;background:var(--bg)}
+.wrap{max-width:1180px;margin:0 auto}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* band */
+.band{background:var(--band);color:var(--band-ink);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.band-in{max-width:1180px;margin:0 auto;padding-block:22px 26px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end}
+.eyebrow{display:flex;gap:10px;align-items:center;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--band-muted);font-weight:600}
+.badge{width:30px;height:36px;flex:none}
+h1{font-family:var(--f-display);font-weight:900;font-size:clamp(56px,11vw,128px);line-height:.82;letter-spacing:.005em;margin:14px 0 10px;text-transform:uppercase;text-wrap:balance}
+h1 span{display:block;font-weight:500;font-size:.32em;letter-spacing:.12em;line-height:1.1;color:var(--band-muted)}
+.lede{max-width:56ch;color:var(--band-muted);margin:0;font-size:14px}
+.prog{display:grid;grid-template-columns:auto auto;gap:4px 22px;align-items:center}
+.ring{grid-row:span 3;width:112px;height:112px}
+.ring circle{fill:none;stroke-width:7}
+.ring .trk{stroke:color-mix(in srgb,var(--band-ink) 16%,transparent)}
+.ring .val{stroke:var(--band-ink);transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)}
+.ring text{fill:var(--band-ink);font-family:var(--f-display);font-weight:700;text-anchor:middle}
+.stat b{display:block;font-family:var(--f-display);font-size:26px;font-weight:700;line-height:1}
+.stat small{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--band-muted)}
+
+/* tabs */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:1000;background:var(--bg);border-bottom:1px solid var(--line);
+  margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.tabs-in{max-width:1180px;margin:0 auto;display:flex;gap:4px;align-items:center;overflow-x:auto;scrollbar-width:none}
+.tab{font-family:var(--f-display);font-weight:700;font-size:19px;letter-spacing:.06em;text-transform:uppercase;padding:14px 12px 11px;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--ink)}
+.tab:hover{color:var(--ink)}
+.spacer{flex:1}
+.toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);white-space:nowrap;padding-left:12px;cursor:pointer}
+.toggle input{accent-color:var(--accent);width:16px;height:16px}
+
+main{padding-block:24px 64px}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.sec-head h2{font-family:var(--f-display);font-weight:700;font-size:30px;text-transform:uppercase;letter-spacing:.03em;margin:0;line-height:1}
+.sec-head p{margin:0;color:var(--muted);font-size:13px;max-width:62ch}
+
+/* comparative heights chart */
+.chart{margin-bottom:34px}
+.arrange{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--muted)}
+.arrange select{font:inherit;font-size:14px;font-weight:600;color:var(--ink);background:var(--surface);border:1.5px solid var(--ink);border-radius:var(--r);padding:6px 10px;cursor:pointer}
+.chart-frame{border:3px double var(--ink);background:var(--surface);padding:4px;border-radius:2px}
+.chart-scroll{overflow-x:auto}
+#heights{display:block;width:100%;min-width:880px;height:auto}
+#heights .sky line,#heights .sea line{stroke:var(--ink)}
+#heights .scale-ax line{stroke:var(--ink);stroke-width:1}
+#heights .scale-ax .rule{stroke-dasharray:1 4;stroke-opacity:.45}
+#heights .scale-ax text{font-family:var(--f-mono);font-size:10px;fill:var(--muted)}
+#heights .scale-ax .axt{font-family:var(--f-body);font-size:10px;letter-spacing:.16em}
+#heights .hl{stroke:var(--ink);stroke-width:.7;stroke-opacity:.6}
+#heights .hl2{stroke:var(--surface);stroke-width:.7;stroke-opacity:.35}
+.mt{transition:transform .9s cubic-bezier(.2,.8,.2,1),opacity .3s;cursor:pointer;outline:none}
+#heights.still .mt{transition:none}
+.mt .body{fill:var(--surface)}
+.mt .shade{fill:url(#hatch)}
+.mt .edge{fill:none;stroke:var(--ink);stroke-width:1.1;stroke-linejoin:round;transition:stroke-width .15s}
+.mt.done .body{fill:var(--ink)}
+.mt.done .shade{fill:url(#hatchDone)}
+.mt .lead{stroke:var(--ink);stroke-width:.8;stroke-dasharray:1 1.6}
+.mt .glyph{fill:var(--surface);stroke:var(--ink);stroke-width:1}
+.mt .lbl{font-family:var(--f-body);font-size:11.5px;font-weight:600;fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.mt .lft{font-family:var(--f-mono);font-weight:400;font-size:10px;fill:var(--muted)}
+.mt:hover .edge,.mt:focus-visible .edge{stroke-width:2.6}
+.mt:hover .lbl,.mt:focus-visible .lbl{font-weight:800}
+.mt.dim{opacity:.2}
+.glabels{opacity:0;transition:opacity .5s}
+.glabels.on{opacity:1}
+.glabels path{fill:none;stroke:var(--ink);stroke-width:1}
+.glabels text{font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;fill:var(--ink)}
+.glabels .gc{font-family:var(--f-mono);font-size:10px;font-weight:400;letter-spacing:0;fill:var(--muted)}
+.cart .cf{fill:var(--surface);stroke:var(--ink);stroke-width:1.4}
+.cart .cf2{fill:none;stroke:var(--ink);stroke-width:.6}
+.cart .c1{font-family:var(--f-body);font-size:10px;letter-spacing:.24em;fill:var(--muted)}
+.cart .c2{font-family:var(--f-display);font-weight:900;font-size:36px;letter-spacing:.02em;fill:var(--ink)}
+.cart .c3{font-family:var(--f-body);font-style:italic;font-size:11px;fill:var(--muted)}
+.chart-foot{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:12px;color:var(--muted);padding:10px 2px 0;align-items:center}
+.chart-foot span{display:inline-flex;gap:6px;align-items:center}
+
+/* map */
+.mapgrid{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:24px;align-items:start}
+#map{height:clamp(440px,72vh,760px);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;position:relative}
+.leaflet-tile-pane{filter:var(--tiles)}
+.tilenote{position:absolute;left:10px;right:10px;bottom:28px;z-index:900;background:var(--surface);border:1px solid var(--ink);border-radius:var(--r);padding:10px 12px;font-size:13px;line-height:1.4;max-width:420px}
+.tilenote b{display:block;font-family:var(--f-display);font-size:17px;text-transform:uppercase;letter-spacing:.04em}
+.leaflet-control-layers{background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;box-shadow:none!important;border-radius:var(--r)!important;font-size:13px}
+.leaflet-control-layers-expanded{padding:8px 12px}
+.leaflet-control-layers-toggle{width:34px!important;height:34px!important;background-image:none!important;position:relative}
+.leaflet-control-layers-toggle::after{content:"TOPO";position:absolute;inset:0;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:12px;letter-spacing:.06em;color:var(--ink)}
+.leaflet-control-layers label{display:flex;gap:6px;align-items:center}
+.leaflet-container{background:var(--water);font-family:var(--f-body);outline:0}
+.leaflet-pane path.land{fill:var(--land);fill-opacity:1;stroke:var(--ink);stroke-opacity:.85;stroke-width:1.1}
+.leaflet-pane path.route{stroke:var(--ink);stroke-width:2.8;stroke-dasharray:1 5;stroke-linecap:round;fill:none}
+.leaflet-pane path.route.leg2{stroke-dasharray:7 4}
+.contours path{fill:none;stroke:var(--ink);vector-effect:non-scaling-stroke}
+.relief{image-rendering:auto}
+.leaflet-bar{border:1px solid var(--line)!important;box-shadow:none!important;border-radius:var(--r)!important}
+.leaflet-bar a{background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important;font-family:var(--f-display);font-weight:700}
+.leaflet-bar a:hover{background:var(--bg)!important}
+.leaflet-control-attribution{background:color-mix(in srgb,var(--surface) 85%,transparent)!important;color:var(--muted)!important;font-size:10px}
+.leaflet-control-attribution a{color:var(--muted)!important}
+.leaflet-control-scale-line{background:color-mix(in srgb,var(--surface) 80%,transparent);border-color:var(--ink);color:var(--ink);font-family:var(--f-mono);font-size:10px}
+.pk{position:relative;width:0;height:0}
+.pk svg{position:absolute;left:-11px;top:-12px;width:22px;height:20px;overflow:visible;cursor:pointer}
+.pk .tri{fill:var(--land);stroke:var(--ink);stroke-width:1.8;transition:fill .25s;transform-origin:11px 12px;transform-box:view-box}
+.pk.done .tri{fill:var(--ink)}
+.pk.sel .tri{stroke-width:3.2}
+.pk.dim{opacity:.25}
+.pk .lbl{position:absolute;top:-9px;white-space:nowrap;font-size:12px;font-weight:700;color:var(--ink);pointer-events:none;
+  text-shadow:0 0 2px var(--land),0 0 3px var(--land),1px 1px 0 var(--land),-1px -1px 0 var(--land),1px -1px 0 var(--land),-1px 1px 0 var(--land)}
+.pk.r .lbl{left:12px}.pk.l .lbl{right:12px}.pk.b .lbl{top:9px;transform:translateX(-50%)}.pk.t .lbl{top:-28px;transform:translateX(-50%)}
+.leaflet-marker-icon:focus-visible{outline:none}
+.leaflet-marker-icon:focus-visible .tri{stroke-width:3.4}
+.nolabels .pk .lbl{display:none}
+.side{display:flex;flex-direction:column;gap:18px}
+.side h3{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;font-weight:600}
+.legend{font-size:12px;color:var(--muted);display:grid;gap:8px}
+.legend div{display:flex;align-items:center;gap:8px}
+.legend svg{flex:none}
+.routebox{border:1.5px solid var(--ink);border-radius:var(--r);padding:12px 14px;display:grid;gap:6px}
+.routebox b{font-family:var(--f-display);font-size:22px;text-transform:uppercase;letter-spacing:.03em;line-height:1}
+.routebox p{margin:0;font-size:13px;color:var(--muted)}
+.routebox .toggle{padding:0;color:var(--ink)}
+.next{border-top:1px solid var(--line);padding-top:14px}
+.next button{display:flex;justify-content:space-between;width:100%;padding:7px 0;border-bottom:1px dashed var(--line);font-size:14px;text-align:left;gap:10px}
+.next button:hover{color:var(--accent)}
+
+/* ledger */
+.ledger{display:grid;border-top:2px solid var(--ink)}
+.row,.scale{display:grid;grid-template-columns:36px 34px 78px minmax(0,1fr) minmax(0,1.3fr) 76px;gap:12px;align-items:center}
+.row{padding:8px 0;border-bottom:1px solid var(--line);background:var(--bg);position:relative}
+.row.hide{display:none}
+.rank{font-family:var(--f-display);font-size:22px;font-weight:700;text-align:right;color:var(--muted)}
+.row.isdone .rank{color:var(--ink)}
+.sil{width:78px;height:30px;display:block}
+.sil path{fill:var(--ink)}
+.nm{min-width:0;text-align:left}
+.nm b{display:block;font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm small{color:var(--muted);font-size:12px}
+.nm:hover b{text-decoration:underline;text-underline-offset:3px}
+.bar{height:10px;background:color-mix(in srgb,var(--ink) 8%,transparent);position:relative}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--ink);transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.vl{text-align:right;font-size:14px}
+.chk{width:30px;height:30px;border:1.6px solid var(--ink);border-radius:50%;display:grid;place-items:center;transition:background .2s,transform .2s}
+.chk svg{width:16px;height:16px;stroke:var(--done-ink);stroke-width:2.4;fill:none;opacity:0;transition:opacity .2s}
+.chk[aria-pressed="true"]{background:var(--done)}
+.chk[aria-pressed="true"] svg{opacity:1}
+.chk:active{transform:scale(.9)}
+.scale{font-size:11px;color:var(--muted);padding-top:6px}
+.scale .ticks{display:flex;justify-content:space-between;grid-column:5}
+.note{font-size:12px;color:var(--muted);margin-top:14px;max-width:80ch}
+
+/* groups */
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.grp{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+.grp header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.grp h3{font-family:var(--f-display);font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin:0;line-height:1}
+.grp .cnt{font-family:var(--f-mono);font-size:13px;color:var(--muted);white-space:nowrap}
+.grp.complete .cnt{color:var(--ink);font-weight:500}
+.grp .gsil{width:100%;height:56px;display:block}
+.grp .gsil path{fill:var(--ink)}
+.grp .gsil path.todo{fill:none;stroke:var(--ink);stroke-width:1.2}
+.grp p{margin:0;font-size:13px;color:var(--muted)}
+.grp ul{list-style:none;margin:0;padding:0;display:grid}
+.grp li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 0;border-top:1px dashed var(--line)}
+.grp li .chk{width:24px;height:24px}
+.grp li .chk svg{width:13px;height:13px}
+.grp li button.nm{font-size:14px}
+.gbar{height:4px;background:color-mix(in srgb,var(--ink) 10%,transparent)}
+.gbar i{display:block;height:100%;background:var(--ink);transition:width .6s}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:color-mix(in srgb,#000 35%,transparent);z-index:2000;opacity:0;transition:opacity .25s;pointer-events:none}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--surface);z-index:2001;border-left:1px solid var(--line);
+  transform:translateX(102%);transition:transform .35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer.on{transform:none}
+.dhead{background:var(--band);color:var(--band-ink);padding:18px 20px 16px;position:relative}
+.dhead .close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:var(--band-ink)}
+.dhead .close:hover{background:color-mix(in srgb,var(--band-ink) 15%,transparent)}
+.dhead small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--band-muted)}
+.dhead h2{font-family:var(--f-display);font-weight:900;font-size:44px;line-height:.9;text-transform:uppercase;margin:6px 40px 6px 0;text-wrap:balance}
+.dhead .old{color:var(--band-muted);font-size:13px;font-style:italic}
+.dsil{display:block;width:100%;height:90px;margin-top:10px}
+.dsil path{fill:var(--band-ink)}
+.dsil .ghost{fill:none;stroke:var(--band-muted);stroke-width:1;stroke-dasharray:3 3}
+.dsil text{fill:var(--band-muted);font-size:9px;letter-spacing:.14em}
+.dbody{padding:18px 20px 28px;overflow-y:auto;display:grid;gap:18px}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin:0}
+.facts div{background:var(--surface);padding:10px 12px}
+.facts dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.facts dd{margin:2px 0 0;font-family:var(--f-display);font-size:26px;font-weight:700;line-height:1.1}
+.facts dd span{font-family:var(--f-body);font-size:12px;font-weight:400;color:var(--muted)}
+.dbody h3{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 6px;font-weight:600}
+.dbody p{margin:0;font-size:14px}
+.trails{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.trails li{font-size:12px;border:1px solid var(--line);padding:3px 8px;border-radius:999px}
+.summit{border:1.5px solid var(--ink);border-radius:var(--r);padding:14px;display:grid;gap:10px}
+.summit .big{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border-radius:var(--r);font-family:var(--f-display);font-weight:700;font-size:20px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--ink)}
+.summit .big[aria-pressed="true"]{background:var(--done);color:var(--done-ink)}
+.summit label{font-size:13px;color:var(--muted);display:flex;gap:10px;align-items:center;justify-content:space-between}
+.summit input[type=date]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:6px 8px}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a,.links button{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;border:1px solid var(--line);padding:7px 12px;border-radius:var(--r);background:var(--bg)}
+.links a:hover,.links button:hover{border-color:var(--ink)}
+.nbrs{display:flex;flex-wrap:wrap;gap:6px}
+.nbrs button{font-size:13px;padding:4px 10px;border:1px dashed var(--line);border-radius:var(--r)}
+.nbrs button:hover{border-style:solid;border-color:var(--ink)}
+.pos{font-size:12px;color:var(--muted)}
+
+footer{border-top:1px solid var(--line);padding-block:18px 28px;font-size:12px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+footer a{color:inherit}
+
+@media (max-width:900px){
+  .mapgrid{grid-template-columns:1fr}
+  .side{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+}
+@media (max-width:640px){
+  .band-in{grid-template-columns:1fr}
+  .row,.scale{grid-template-columns:30px 26px minmax(0,1fr) 64px;gap:10px}
+  .row .sil,.scale>span:nth-child(3){display:none}
+  .row .bar{grid-column:3/5;grid-row:2;margin-top:-2px}
+  .row .rank{font-size:18px}
+  .scale .ticks{grid-column:3/5}
+  .side{grid-template-columns:1fr}
+  .tabs .toggle span{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<header class="band">
+  <div class="band-in">
+    <div>
+      <div class="eyebrow">
+        <svg class="badge" viewBox="0 0 30 36" aria-hidden="true"><path d="M15 1 L28 6 V20 C28 28 21 33 15 35 C9 33 2 28 2 20 V6 Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 25 L11 15 L14 19 L18 11 L25 25 Z" fill="currentColor"/><circle cx="21" cy="9" r="1.8" fill="currentColor"/></svg>
+        Acadia National Park &middot; Mount Desert Island, Maine
+      </div>
+      <h1><span>The Full 30 Peak Challenge</span>Acadia&nbsp;30</h1>
+      <p class="lede">Every summit on Peakery's Acadia Full 30 list, all on Mount Desert Island. Tap a peak to read about it and log your summit.</p>
+    </div>
+    <div class="prog" aria-live="polite">
+      <svg class="ring" viewBox="0 0 112 112" role="img" aria-label="Summit progress">
+        <circle class="trk" cx="56" cy="56" r="48"/>
+        <circle class="val" id="ringVal" cx="56" cy="56" r="48" stroke-dasharray="301.6" stroke-dashoffset="301.6"/>
+        <text x="56" y="60" font-size="34" id="ringNum">0</text>
+        <text x="56" y="80" font-size="12" letter-spacing="2" opacity=".7">OF 30</text>
+      </svg>
+      <div class="stat"><b class="mono" id="stFeet">0 ft</b><small>Summit feet logged</small></div>
+      <div class="stat"><b id="stGroups">0 / 9</b><small>Outings complete</small></div>
+      <div class="stat"><b id="stHigh">—</b><small>Highest bagged</small></div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Views">
+  <div class="tabs-in" role="tablist">
+    <button class="tab" role="tab" data-view="map" id="tab-map">Map</button>
+    <button class="tab" role="tab" data-view="height" id="tab-height">By height</button>
+    <button class="tab" role="tab" data-view="prominence" id="tab-prominence">By prominence</button>
+    <button class="tab" role="tab" data-view="groups" id="tab-groups">Outings</button>
+    <div class="spacer"></div>
+    <label class="toggle" for="hideDone"><input type="checkbox" id="hideDone"><span>Hide summited</span></label>
+  </div>
+</nav>
+
+<main class="wrap">
+  <section id="view-map">
+    <section class="chart" aria-labelledby="chartTitle">
+      <div class="sec-head">
+        <h2 id="chartTitle">Comparative heights</h2>
+        <label class="arrange" for="chartOrder">Arrange
+          <select id="chartOrder"><option value="height">Tallest to shortest</option><option value="group">By outing</option></select>
+        </label>
+      </div>
+      <div class="chart-frame"><div class="chart-scroll"><svg id="heights" class="still" role="group" aria-label="Silhouettes of the 30 peaks, drawn to scale"></svg></div></div>
+      <div class="chart-foot">
+        <span><svg width="16" height="14" viewBox="0 0 16 14"><defs><pattern id="lgH" width="3" height="4" patternUnits="userSpaceOnUse"><path d="M.8 0V4" stroke="var(--ink)" stroke-width=".7" stroke-opacity=".6"/></pattern></defs><path d="M8 1 L15 13 H1 Z" fill="var(--surface)" stroke="var(--ink)"/><path d="M8 1 L15 13 H9 Z" fill="url(#lgH)"/></svg>Still to climb</span>
+        <span><svg width="16" height="14" viewBox="0 0 16 14"><path d="M8 1 L15 13 H1 Z" fill="var(--ink)" stroke="var(--ink)"/></svg>Summited</span>
+        <span>Heights are to scale. Outlines are drawn by hand from each mountain's character. Tap a peak for details.</span>
+      </div>
+    </section>
+    <div class="sec-head">
+      <h2>Mount Desert Island</h2>
+      <p>Topographic basemap from USGS The National Map, with OpenTopoMap as a second option (switch with the TOPO button). Contours every 20 ft on the USGS sheets.</p>
+    </div>
+    <div class="mapgrid">
+      <div id="map" role="application" aria-label="Map of Mount Desert Island with 30 peaks"></div>
+      <aside class="side">
+        <div class="routebox">
+          <h3 style="margin:0">Example outing</h3>
+          <b>Acadirettissima</b>
+          <p>A two-leg traverse of 26 peaks, west to east. <span class="mono" id="routeLen"></span></p>
+          <label class="toggle" for="showRoute"><input type="checkbox" id="showRoute" checked> Show route on map</label>
+        </div>
+        <div class="legend">
+          <h3>Key</h3>
+          <div><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 2 L16 14 H2 Z" fill="var(--land)" stroke="var(--ink)" stroke-width="1.6"/></svg>Still to climb</div>
+          <div><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 2 L16 14 H2 Z" fill="var(--ink)" stroke="var(--ink)" stroke-width="1.6"/></svg>Summited</div>
+          <div><svg width="24" height="8" viewBox="0 0 24 8"><path d="M1 4 H23" stroke="var(--ink)" stroke-width="2.2" stroke-dasharray="1 5" stroke-linecap="round"/></svg>Traverse, western leg</div>
+          <div><svg width="24" height="8" viewBox="0 0 24 8"><path d="M0 4 H24" stroke="var(--ink)" stroke-width="2.2" stroke-dasharray="7 4"/></svg>Traverse, eastern leg</div>
+                  </div>
+        <div class="next">
+          <h3>Tallest still waiting</h3>
+          <div id="nextList"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="view-ledger" hidden>
+    <div class="sec-head">
+      <h2 id="ledgerTitle">By height</h2>
+      <p id="ledgerSub"></p>
+    </div>
+    <div class="ledger" id="ledger"></div>
+    <div class="scale" aria-hidden="true"><span></span><span></span><span></span><span></span><div class="ticks mono"><span>0</span><span>500</span><span>1,000</span><span>1,528 ft</span></div><span></span></div>
+    <p class="note" id="promNote" hidden>Prominence is how far a summit rises above the lowest saddle connecting it to higher ground. Figures are Peakery's.</p>
+  </section>
+
+  <section id="view-groups" hidden>
+    <div class="sec-head">
+      <h2>Outings</h2>
+      <p>Nine clusters that hike well together. Finish every peak in a cluster and it counts toward your outing total.</p>
+    </div>
+    <div class="groups" id="groups"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Peak list, elevations and prominence from Peakery's Acadia National Park Full 30 Peak Challenge. Topo basemaps from USGS The National Map and OpenTopoMap. Your checkmarks are saved in this browser.</span>
+    <span><a href="https://peakery.com/challenges/acadia-national-park-full-30-peak-challenge/" target="_blank" rel="noopener">Peakery challenge</a> &middot; <a href="https://www.nps.gov/acad/planyourvisit/hike-summit.htm" target="_blank" rel="noopener">NPS summit hikes</a></span>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-labelledby="dName" role="dialog">
+  <div class="dhead">
+    <button class="close" id="dClose" aria-label="Close"><svg width="18" height="18" viewBox="0 0 18 18" stroke="currentColor" stroke-width="2"><path d="M3 3 L15 15 M15 3 L3 15"/></svg></button>
+    <small id="dGroup"></small>
+    <h2 id="dName"></h2>
+    <div class="old" id="dOld"></div>
+    <svg class="dsil" id="dSil" viewBox="0 0 300 90" preserveAspectRatio="none" aria-hidden="true"></svg>
+  </div>
+  <div class="dbody">
+    <dl class="facts">
+      <div><dt>Elevation</dt><dd id="dElev"></dd></div>
+      <div><dt>Prominence</dt><dd id="dProm"></dd></div>
+      <div><dt>Height rank</dt><dd id="dRankE"></dd></div>
+      <div><dt>Prominence rank</dt><dd id="dRankP"></dd></div>
+    </dl>
+    <div class="summit">
+      <button class="big" id="dCheck" aria-pressed="false"></button>
+      <label for="dDate">Summit date <input type="date" id="dDate"></label>
+    </div>
+    <div><h3>About</h3><p id="dNote"></p></div>
+    <div><h3>Trails to the top</h3><ul class="trails" id="dTrails"></ul></div>
+    <div><h3>Read more</h3><div class="links" id="dLinks"></div></div>
+    <div><h3>Same outing</h3><div class="nbrs" id="dNbrs"></div></div>
+    <p class="pos" id="dPos"></p>
+  </div>
+</aside>
+
+<script src="vendor/leaflet.js"></script>
+<script>
+const MAPDATA={"route":[[[44.3265,-68.29162],[44.326,-68.29136],[44.32592,-68.29175],[44.32594,-68.2922],[44.32584,-68.29262],[44.32604,-68.29305],[44.32632,-68.29312],[44.32617,-68.29333],[44.32641,-68.29348],[44.32695,-68.294],[44.32723,-68.2944],[44.32756,-68.29475],[44.32749,-68.29508],[44.32752,-68.29546],[44.32719,-68.29602],[44.32667,-68.29571],[44.32644,-68.29589],[44.32629,-68.29625],[44.32579,-68.29634],[44.32559,-68.29615],[44.32455,-68.29593],[44.32554,-68.29612],[44.32559,-68.29614],[44.32566,-68.29624],[44.32577,-68.29632],[44.32582,-68.29633],[44.32591,-68.29627],[44.32595,-68.29632],[44.32598,-68.29632],[44.32598,-68.29627],[44.32622,-68.29628],[44.3266,-68.29576],[44.32687,-68.29582],[44.32719,-68.29602],[44.32742,-68.29556],[44.32752,-68.29542],[44.32748,-68.29492],[44.32755,-68.29476],[44.32747,-68.2946],[44.32721,-68.29435],[44.32699,-68.29408],[44.32674,-68.29389],[44.32655,-68.29362],[44.32615,-68.29338],[44.3263,-68.29312],[44.32607,-68.29308],[44.32583,-68.2926],[44.32591,-68.2923],[44.32592,-68.29209],[44.32598,-68.29185],[44.32591,-68.29179],[44.32591,-68.29151],[44.326,-68.29132],[44.32597,-68.2908],[44.32664,-68.29054],[44.32762,-68.29084],[44.32803,-68.29034],[44.32823,-68.28989],[44.32866,-68.28957],[44.32871,-68.28968],[44.32898,-68.28985],[44.32924,-68.28978],[44.32938,-68.28986],[44.32971,-68.28952],[44.32981,-68.28912],[44.33009,-68.28909],[44.33077,-68.28843],[44.33125,-68.28818],[44.33128,-68.28789],[44.33087,-68.28774],[44.33089,-68.28759],[44.33131,-68.2869],[44.33149,-68.28707],[44.33192,-68.28702],[44.33192,-68.28625],[44.33217,-68.28561],[44.33235,-68.28542],[44.33269,-68.28525],[44.33279,-68.28527],[44.33284,-68.28537],[44.33295,-68.28537],[44.33309,-68.28526],[44.33306,-68.28491],[44.33323,-68.28485],[44.33323,-68.28473],[44.33353,-68.2845],[44.33358,-68.28449],[44.33367,-68.28463],[44.33374,-68.28458],[44.33381,-68.28469],[44.33385,-68.28465],[44.33383,-68.2847],[44.33417,-68.28429],[44.33445,-68.28424],[44.33478,-68.284],[44.33494,-68.284],[44.33521,-68.28385],[44.33528,-68.28371],[44.33542,-68.28366],[44.33584,-68.28396],[44.33617,-68.2841],[44.33617,-68.28437],[44.33636,-68.28442],[44.33643,-68.2845],[44.33682,-68.28435],[44.33707,-68.28457],[44.33707,-68.28524],[44.33731,-68.28543],[44.33754,-68.28538],[44.33775,-68.28565],[44.33809,-68.28568],[44.33808,-68.28564],[44.33851,-68.2855],[44.33865,-68.2854],[44.33871,-68.28519],[44.33881,-68.28519],[44.33871,-68.28499],[44.33881,-68.28496],[44.33881,-68.2848],[44.33857,-68.28457],[44.33873,-68.2844],[44.33872,-68.28422],[44.33889,-68.28406],[44.33894,-68.28361],[44.33881,-68.28314],[44.3388,-68.28245],[44.33884,-68.282],[44.33929,-68.28194],[44.33937,-68.28166],[44.33943,-68.28134],[44.33944,-68.28089],[44.3388,-68.28009],[44.33943,-68.28084],[44.33947,-68.28121],[44.33937,-68.28147],[44.33937,-68.28175],[44.33912,-68.28183],[44.33877,-68.28207],[44.3388,-68.2825],[44.33884,-68.28265],[44.33878,-68.28288],[44.33895,-68.28342],[44.33854,-68.28355],[44.33746,-68.28299],[44.33702,-68.28293],[44.33683,-68.28273],[44.33589,-68.28236],[44.33576,-68.28223],[44.33515,-68.28193],[44.33483,-68.28164],[44.33417,-68.28156],[44.33386,-68.28165],[44.33348,-68.28163],[44.33333,-68.28157],[44.33331,-68.28129],[44.33297,-68.28134],[44.33282,-68.28159],[44.3326,-68.28174],[44.33246,-68.28176],[44.33239,-68.2819],[44.33221,-68.28189],[44.33186,-68.28207],[44.33181,-68.28192],[44.33186,-68.28192],[44.33189,-68.28178],[44.33196,-68.28171],[44.33199,-68.28179],[44.33199,-68.28179],[44.33202,-68.28191],[44.33202,-68.28191],[44.33199,-68.28179],[44.33199,-68.28179],[44.33195,-68.28171],[44.33195,-68.28169],[44.33192,-68.28164],[44.33159,-68.28118],[44.33149,-68.28092],[44.33157,-68.28063],[44.33178,-68.28028],[44.33173,-68.28008],[44.33177,-68.27992],[44.33165,-68.27979],[44.3318,-68.27977],[44.33182,-68.27955],[44.33177,-68.27954],[44.3319,-68.27914],[44.33208,-68.27905],[44.33203,-68.27884],[44.3321,-68.2785],[44.33206,-68.27803],[44.3322,-68.27786],[44.33218,-68.2776],[44.33234,-68.27732],[44.33232,-68.27703],[44.33243,-68.27689],[44.33237,-68.2766],[44.33244,-68.2764],[44.33239,-68.27629],[44.33198,-68.27606],[44.33167,-68.2763],[44.33159,-68.2762],[44.33127,-68.27616],[44.33053,-68.27545],[44.3303,-68.27537],[44.32993,-68.27502],[44.32975,-68.27504],[44.3297,-68.27519],[44.32958,-68.27529],[44.32936,-68.27517],[44.32857,-68.27443],[44.32836,-68.27435],[44.32837,-68.27462],[44.32846,-68.2747],[44.32859,-68.27511],[44.32859,-68.27513],[44.32841,-68.27537],[44.32842,-68.27538],[44.32822,-68.27529],[44.32792,-68.27545],[44.32811,-68.27564],[44.32821,-68.27611],[44.32809,-68.27554],[44.3279,-68.27547],[44.32816,-68.27531],[44.32843,-68.27538],[44.32859,-68.27513],[44.32855,-68.27498],[44.32848,-68.27473],[44.32837,-68.27464],[44.32837,-68.2745],[44.32832,-68.27434],[44.3284,-68.27405],[44.32862,-68.27385],[44.32871,-68.27367],[44.32904,-68.27368],[44.32927,-68.27389],[44.32953,-68.27389],[44.33005,-68.27342],[44.33028,-68.27343],[44.33039,-68.27323],[44.33082,-68.27346],[44.33115,-68.27322],[44.33142,-68.27323],[44.33188,-68.2726],[44.33229,-68.27226],[44.33254,-68.27194],[44.33271,-68.27147],[44.33352,-68.27115],[44.33413,-68.2708],[44.33402,-68.27005],[44.3341,-68.26952],[44.33364,-68.26891],[44.33389,-68.26858],[44.33438,-68.26811],[44.33441,-68.26793],[44.33407,-68.2669],[44.33318,-68.26681],[44.3329,-68.26651],[44.33298,-68.26667],[44.33356,-68.26684],[44.33406,-68.26683],[44.33438,-68.26799],[44.33435,-68.26816],[44.33412,-68.26846],[44.33367,-68.26878],[44.33367,-68.26891],[44.33367,-68.26891],[44.33368,-68.26904],[44.33368,-68.26908],[44.334,-68.26931],[44.33407,-68.26947],[44.3341,-68.26967],[44.33403,-68.27002],[44.33418,-68.27069],[44.33418,-68.27094],[44.33439,-68.27105],[44.33539,-68.27095],[44.33555,-68.27097],[44.33563,-68.27105],[44.33608,-68.27098],[44.33626,-68.27109],[44.33635,-68.27103],[44.33687,-68.27141],[44.33721,-68.27142],[44.33774,-68.27162],[44.33839,-68.27161],[44.33876,-68.2718],[44.33896,-68.27148],[44.33908,-68.27146],[44.33907,-68.2714],[44.33941,-68.27166],[44.33993,-68.2723],[44.34181,-68.27325],[44.34239,-68.27312],[44.34334,-68.27355],[44.34288,-68.272],[44.34299,-68.27159],[44.34287,-68.27129],[44.34279,-68.27081],[44.34253,-68.27017],[44.34231,-68.26987],[44.34226,-68.26854],[44.34209,-68.26799],[44.34174,-68.26786],[44.3414,-68.26753],[44.34044,-68.26702],[44.34031,-68.26634],[44.34012,-68.26608],[44.3399,-68.26604],[44.33984,-68.26597],[44.33986,-68.26579],[44.34003,-68.26557],[44.34,-68.26546],[44.33957,-68.26472],[44.33941,-68.26457],[44.33983,-68.26335],[44.34023,-68.26288],[44.34024,-68.26238],[44.34031,-68.26233],[44.34063,-68.26237],[44.34067,-68.26227],[44.34059,-68.26216],[44.34063,-68.26188],[44.34057,-68.2617],[44.34068,-68.26158],[44.3408,-68.26114],[44.34076,-68.26063],[44.34062,-68.26037],[44.34029,-68.26022],[44.33986,-68.25984],[44.33996,-68.25975],[44.34006,-68.25982],[44.34013,-68.25882],[44.34026,-68.25854],[44.34022,-68.25846],[44.34042,-68.25829],[44.34045,-68.25811],[44.34073,-68.25799],[44.34111,-68.25733],[44.34123,-68.25691],[44.34151,-68.2567],[44.34149,-68.25644],[44.34161,-68.25611],[44.34156,-68.25593],[44.34171,-68.25569],[44.34174,-68.25517],[44.34195,-68.25496],[44.34171,-68.25447],[44.34136,-68.25433],[44.34104,-68.25437],[44.34073,-68.25438],[44.34036,-68.25407],[44.34018,-68.25402],[44.33996,-68.25392],[44.33957,-68.25374],[44.33937,-68.25358],[44.33949,-68.2537],[44.33957,-68.25374],[44.33974,-68.25377],[44.33983,-68.25382],[44.34001,-68.25398],[44.34011,-68.25402],[44.34022,-68.25403],[44.3403,-68.25404],[44.34064,-68.25434],[44.34086,-68.2544],[44.34087,-68.25438],[44.3412,-68.2543],[44.34166,-68.25444],[44.34194,-68.25491],[44.34235,-68.25433],[44.34266,-68.25414],[44.34283,-68.25454],[44.34257,-68.25525],[44.34255,-68.25533],[44.34256,-68.25547],[44.34283,-68.25589],[44.34348,-68.25609],[44.34352,-68.25648],[44.34379,-68.25662],[44.34408,-68.25691],[44.34439,-68.25703],[44.34409,-68.2569],[44.3439,-68.25667],[44.34349,-68.25647],[44.34351,-68.25613],[44.34342,-68.25605],[44.3429,-68.25593],[44.34273,-68.25573],[44.34256,-68.25528],[44.3426,-68.25509],[44.34281,-68.25457],[44.3428,-68.25451],[44.3428,-68.25451],[44.3428,-68.25447],[44.34267,-68.25415],[44.34231,-68.2537],[44.34237,-68.25308],[44.34085,-68.2514],[44.34096,-68.25128],[44.34113,-68.25037],[44.34115,-68.24952],[44.34135,-68.24881],[44.34125,-68.24825],[44.34076,-68.24816],[44.34085,-68.24776],[44.34069,-68.24737],[44.33978,-68.24696],[44.33814,-68.24574],[44.33722,-68.2458],[44.33656,-68.24572],[44.33637,-68.24587],[44.33585,-68.24553],[44.33478,-68.2454],[44.33378,-68.24473],[44.33344,-68.24497],[44.33283,-68.24497],[44.33229,-68.24469],[44.33191,-68.24389],[44.33054,-68.24329],[44.3297,-68.24334],[44.32934,-68.2431],[44.3289,-68.24323],[44.32861,-68.24374],[44.32804,-68.24372],[44.32781,-68.24407],[44.32538,-68.2443],[44.32518,-68.24409],[44.32506,-68.24407],[44.32474,-68.24417],[44.32339,-68.24372],[44.32247,-68.24295],[44.32233,-68.24327],[44.32254,-68.24424],[44.32201,-68.24568],[44.32228,-68.24651],[44.32374,-68.24755],[44.32381,-68.24769],[44.32378,-68.24786],[44.32355,-68.24823],[44.32356,-68.24869],[44.3238,-68.24931],[44.32381,-68.2496],[44.32359,-68.25006],[44.32361,-68.25059],[44.32371,-68.2508],[44.32423,-68.25127],[44.32424,-68.25154],[44.32413,-68.25179],[44.3238,-68.2522],[44.32358,-68.25314],[44.3235,-68.25316],[44.32336,-68.25345],[44.32261,-68.2541],[44.32234,-68.25414],[44.32231,-68.25422],[44.32075,-68.25425],[44.32038,-68.25414],[44.32026,-68.25369],[44.32015,-68.25365],[44.32011,-68.25355],[44.32,-68.25346],[44.31992,-68.25343],[44.31957,-68.2535],[44.31928,-68.25337],[44.31886,-68.25346],[44.31881,-68.25326],[44.31894,-68.25309],[44.31915,-68.25247],[44.31905,-68.25226],[44.31913,-68.25192],[44.3192,-68.25063],[44.3194,-68.25022],[44.32001,-68.24992],[44.32073,-68.24865],[44.3208,-68.24832],[44.32069,-68.24808],[44.3193,-68.24666],[44.31803,-68.24598],[44.31701,-68.24487],[44.31662,-68.24435],[44.31622,-68.24345],[44.31578,-68.24305],[44.31562,-68.24279],[44.31553,-68.24211],[44.31565,-68.24174],[44.31587,-68.24137],[44.31629,-68.24091],[44.3167,-68.2403],[44.31683,-68.23985],[44.31677,-68.23946],[44.31613,-68.23848],[44.31578,-68.23748],[44.31543,-68.23672],[44.3154,-68.23643],[44.31551,-68.23518],[44.31558,-68.23495],[44.31597,-68.23441],[44.31597,-68.23441],[44.31597,-68.23449],[44.31597,-68.23449],[44.31597,-68.23441],[44.3157,-68.23406],[44.31524,-68.23381],[44.31483,-68.23366],[44.31435,-68.23363],[44.314,-68.23351],[44.31337,-68.23345],[44.31288,-68.2329],[44.31277,-68.23283],[44.31224,-68.23272],[44.31183,-68.23251],[44.31129,-68.23262],[44.31112,-68.2326],[44.31064,-68.23246],[44.31037,-68.23253],[44.30969,-68.23235],[44.31032,-68.23256],[44.31074,-68.23246],[44.31111,-68.2326],[44.31162,-68.23257],[44.31175,-68.23251],[44.31187,-68.23252],[44.31277,-68.23283],[44.31337,-68.23345],[44.314,-68.23351],[44.31435,-68.23363],[44.31483,-68.23366],[44.31524,-68.23381],[44.31554,-68.23397],[44.3157,-68.23406],[44.31576,-68.23413],[44.31597,-68.23441],[44.31618,-68.23503],[44.31649,-68.23505],[44.31701,-68.23532],[44.31756,-68.23538],[44.31784,-68.23568],[44.318,-68.23608],[44.31845,-68.23644],[44.31855,-68.23675],[44.31921,-68.23689],[44.31963,-68.23709],[44.31987,-68.23704],[44.32001,-68.23689],[44.32001,-68.23694],[44.32021,-68.23686],[44.32082,-68.23647],[44.32181,-68.23679],[44.32221,-68.23617],[44.32242,-68.2355],[44.32241,-68.23486],[44.32215,-68.23438],[44.32201,-68.23383],[44.32193,-68.23269],[44.32222,-68.23214],[44.32253,-68.23192],[44.3232,-68.23169],[44.32363,-68.23102],[44.32412,-68.23162],[44.32489,-68.23191],[44.32531,-68.23228],[44.32566,-68.23277],[44.32587,-68.23346],[44.32608,-68.23391],[44.326,-68.23394],[44.32635,-68.23456],[44.32669,-68.23544],[44.32716,-68.236],[44.32781,-68.23656],[44.3287,-68.2363],[44.32887,-68.23647],[44.32963,-68.23561],[44.32949,-68.23571],[44.3295,-68.23561],[44.32985,-68.23538],[44.33061,-68.2351],[44.33114,-68.23472],[44.33135,-68.23466],[44.33234,-68.2347],[44.33283,-68.23461],[44.33397,-68.23468],[44.33464,-68.23452],[44.33485,-68.23435],[44.33492,-68.23404],[44.33471,-68.23387],[44.33484,-68.23337],[44.3348,-68.23298],[44.33487,-68.23262],[44.33485,-68.23214],[44.33497,-68.23171],[44.33477,-68.23118],[44.33491,-68.23052],[44.3351,-68.23047],[44.3353,-68.23055],[44.33563,-68.23043],[44.33574,-68.23049],[44.33585,-68.23031],[44.33591,-68.22986],[44.33623,-68.22986],[44.33641,-68.22972],[44.33661,-68.22975],[44.33674,-68.22946],[44.33685,-68.2295],[44.3369,-68.2294],[44.33713,-68.22939],[44.33744,-68.22952],[44.33769,-68.22942],[44.33773,-68.22913],[44.33799,-68.2291],[44.33793,-68.22881],[44.33803,-68.22869],[44.33814,-68.22785],[44.33846,-68.22743],[44.33844,-68.22689],[44.33865,-68.22688],[44.33892,-68.2267],[44.33907,-68.22675],[44.33923,-68.22706],[44.33938,-68.22806],[44.33979,-68.22852],[44.34003,-68.22865],[44.34045,-68.22851],[44.34075,-68.22871],[44.34131,-68.22883],[44.34144,-68.22896],[44.34181,-68.22913],[44.34184,-68.22922],[44.34199,-68.22922],[44.34214,-68.22935],[44.34233,-68.22939],[44.34236,-68.22948],[44.34257,-68.22952],[44.34276,-68.22973],[44.34313,-68.22978],[44.34331,-68.2299],[44.34371,-68.2299],[44.34392,-68.22978],[44.34405,-68.22978],[44.34466,-68.22939],[44.34503,-68.22939],[44.34543,-68.22952],[44.34685,-68.22948],[44.34708,-68.22941],[44.34747,-68.229],[44.34782,-68.22875],[44.34877,-68.22868],[44.34911,-68.22847],[44.34977,-68.22855],[44.35002,-68.22832],[44.35003,-68.22799],[44.35015,-68.22776],[44.35045,-68.22754],[44.35087,-68.22696],[44.3512,-68.22639],[44.35149,-68.22639],[44.35164,-68.22632],[44.35192,-68.22613],[44.35229,-68.22572],[44.35218,-68.22495],[44.35239,-68.22467],[44.35278,-68.22458],[44.3529,-68.22417],[44.35308,-68.22415],[44.35318,-68.22407],[44.35322,-68.2239],[44.3531,-68.22333],[44.35314,-68.2236],[44.35315,-68.2236],[44.35325,-68.22341],[44.35337,-68.22309],[44.35382,-68.22294],[44.3539,-68.22283],[44.35392,-68.22198],[44.35374,-68.22153],[44.35387,-68.22127],[44.35405,-68.2212],[44.35434,-68.22081],[44.35446,-68.22033],[44.35469,-68.22015],[44.35486,-68.21947],[44.355,-68.21937],[44.35559,-68.21925],[44.35611,-68.21898],[44.35639,-68.2185],[44.35624,-68.21812],[44.35624,-68.21707],[44.35603,-68.2168],[44.35599,-68.2165],[44.35608,-68.21645],[44.35608,-68.21645],[44.35599,-68.2165],[44.35599,-68.2165],[44.35588,-68.21651],[44.35567,-68.21637],[44.35488,-68.21617],[44.35471,-68.21609],[44.3547,-68.2161],[44.35468,-68.21611],[44.35471,-68.21609],[44.35567,-68.21637],[44.35588,-68.21651],[44.35599,-68.2165],[44.35585,-68.21604],[44.35578,-68.21592],[44.35561,-68.21582],[44.35551,-68.21559],[44.35548,-68.21485],[44.35528,-68.21444],[44.35531,-68.21399],[44.35506,-68.2134],[44.35506,-68.21288],[44.35467,-68.21237],[44.35472,-68.21227],[44.35487,-68.21224],[44.35485,-68.21193],[44.355,-68.21167],[44.35499,-68.21158],[44.35487,-68.21146],[44.35447,-68.21134],[44.35423,-68.21103],[44.35386,-68.21082],[44.35345,-68.21006],[44.35346,-68.20984],[44.35395,-68.2098],[44.3548,-68.20987],[44.35674,-68.21086],[44.35679,-68.21083],[44.35678,-68.21056],[44.35702,-68.21055],[44.35707,-68.21047],[44.35701,-68.2103],[44.35706,-68.21017],[44.35792,-68.21043],[44.35863,-68.21082],[44.35878,-68.21079],[44.35896,-68.21057],[44.3592,-68.21044],[44.35952,-68.21051],[44.35988,-68.21073],[44.35968,-68.2106],[44.35957,-68.21034],[44.35945,-68.21022],[44.3591,-68.21003],[44.35895,-68.20983],[44.3586,-68.20982],[44.35847,-68.20975],[44.35829,-68.20955],[44.35817,-68.20929],[44.35781,-68.2091],[44.35766,-68.20884],[44.35761,-68.20858],[44.35771,-68.20845],[44.35834,-68.20844],[44.3586,-68.20851],[44.35867,-68.2085],[44.35873,-68.20839],[44.35861,-68.20812],[44.35861,-68.20786],[44.35849,-68.20744],[44.35849,-68.2069],[44.35856,-68.20667],[44.35848,-68.20648],[44.35847,-68.20557],[44.35838,-68.20551],[44.35841,-68.20521],[44.35784,-68.20462],[44.3577,-68.20434],[44.35731,-68.20273],[44.35718,-68.20266],[44.35704,-68.2027],[44.35656,-68.20299],[44.35619,-68.20294],[44.35576,-68.20304],[44.35562,-68.20301],[44.35545,-68.20281],[44.35469,-68.20272],[44.35425,-68.2022],[44.35405,-68.20212],[44.35392,-68.20198],[44.35352,-68.20184],[44.35349,-68.20155],[44.35312,-68.2015],[44.35284,-68.2013],[44.35243,-68.20043],[44.35236,-68.1998],[44.35245,-68.19954],[44.35269,-68.19921],[44.35297,-68.19907],[44.35306,-68.19894],[44.35312,-68.19864],[44.35308,-68.19827],[44.35292,-68.19785],[44.35263,-68.19762],[44.35251,-68.19702],[44.35233,-68.19683],[44.35221,-68.19639],[44.35183,-68.19585],[44.35182,-68.19502],[44.35139,-68.19461],[44.3511,-68.19444],[44.35084,-68.19404],[44.35084,-68.19404],[44.35093,-68.19398],[44.35107,-68.194],[44.35104,-68.19397],[44.35093,-68.19398],[44.35093,-68.19398],[44.35093,-68.19398],[44.35084,-68.19404],[44.35041,-68.19389],[44.35003,-68.19391],[44.34873,-68.19315],[44.34853,-68.19312],[44.3483,-68.19296],[44.34803,-68.19309],[44.34785,-68.1931],[44.34761,-68.19328],[44.34748,-68.1933],[44.3466,-68.19329],[44.34642,-68.19323],[44.34597,-68.19343],[44.34567,-68.19344],[44.34532,-68.19331],[44.3446,-68.19346],[44.34422,-68.19341],[44.3439,-68.19366],[44.34362,-68.19374],[44.34335,-68.19415],[44.34287,-68.19411],[44.34247,-68.1944],[44.3423,-68.19433],[44.34221,-68.19436],[44.34127,-68.19503],[44.3408,-68.19568],[44.34049,-68.19568],[44.33993,-68.19554],[44.33932,-68.19577],[44.33897,-68.19601],[44.33842,-68.19594],[44.33786,-68.19645],[44.33765,-68.19701],[44.33749,-68.19723],[44.33698,-68.19726],[44.33676,-68.19715],[44.33648,-68.19677],[44.33644,-68.19654],[44.33656,-68.19586],[44.33637,-68.19542],[44.33629,-68.19436],[44.33621,-68.19412],[44.33594,-68.19372],[44.3359,-68.19325],[44.33566,-68.19248],[44.33571,-68.19198],[44.33602,-68.1917],[44.33593,-68.19119],[44.33568,-68.19099],[44.33539,-68.19099],[44.3351,-68.19081],[44.33476,-68.19072],[44.33461,-68.19059],[44.33436,-68.19051],[44.33432,-68.1899],[44.33415,-68.1896],[44.33397,-68.1895],[44.33381,-68.18906],[44.33384,-68.18875],[44.33371,-68.18825],[44.33351,-68.18807],[44.33325,-68.188],[44.33315,-68.18788],[44.33274,-68.18783],[44.33274,-68.18771],[44.33268,-68.18782],[44.33263,-68.18775],[44.33265,-68.1881],[44.3325,-68.18793],[44.33247,-68.18763],[44.33239,-68.18777],[44.33239,-68.188],[44.33233,-68.18775],[44.33215,-68.1881],[44.33201,-68.18819],[44.33199,-68.18806],[44.33185,-68.18794],[44.33183,-68.18774],[44.33168,-68.18758],[44.33157,-68.18774],[44.33148,-68.18812],[44.33171,-68.18907],[44.3317,-68.18997],[44.33208,-68.19061],[44.33202,-68.19098],[44.33228,-68.19114],[44.33218,-68.19109],[44.33202,-68.19098],[44.33156,-68.19133],[44.33124,-68.19146],[44.33047,-68.19152],[44.33021,-68.19184],[44.3301,-68.19189],[44.32918,-68.19141],[44.32887,-68.19138],[44.32861,-68.19146],[44.3284,-68.19164],[44.32828,-68.19192],[44.32803,-68.19205],[44.32787,-68.19254],[44.32757,-68.19306],[44.32725,-68.19327],[44.32706,-68.19326],[44.32656,-68.193],[44.3262,-68.19293],[44.32591,-68.19267],[44.32511,-68.1923],[44.3248,-68.19206],[44.32447,-68.19211],[44.32394,-68.19187],[44.32354,-68.19186],[44.32331,-68.19193],[44.32305,-68.19214],[44.32268,-68.19269],[44.32193,-68.19307],[44.32167,-68.19314],[44.32114,-68.19309],[44.32089,-68.19283],[44.3204,-68.19263],[44.32022,-68.19245],[44.3198,-68.19262],[44.31967,-68.19286],[44.31922,-68.19279],[44.31896,-68.19263],[44.31867,-68.19273],[44.31843,-68.193],[44.31815,-68.19294],[44.3178,-68.19309],[44.31726,-68.19308],[44.31689,-68.19267],[44.31664,-68.19209],[44.31659,-68.19167],[44.31682,-68.19155],[44.31696,-68.19138],[44.31705,-68.19111],[44.31721,-68.19115]],[[44.31204,-68.33243],[44.31212,-68.33216],[44.31197,-68.3321],[44.31193,-68.33219],[44.31203,-68.33235],[44.31186,-68.33224],[44.31173,-68.33183],[44.31174,-68.33173],[44.31182,-68.33149],[44.31181,-68.33106],[44.31185,-68.33097],[44.31199,-68.33088],[44.31223,-68.33088],[44.31225,-68.33075],[44.31221,-68.33052],[44.31234,-68.33029],[44.31236,-68.33007],[44.31226,-68.32981],[44.31232,-68.32962],[44.31229,-68.32928],[44.31233,-68.32927],[44.31228,-68.32914],[44.31198,-68.32888],[44.31195,-68.32872],[44.31185,-68.3286],[44.31186,-68.32838],[44.3118,-68.32815],[44.31174,-68.32807],[44.3117,-68.32807],[44.31161,-68.32801],[44.31155,-68.32806],[44.31145,-68.32799],[44.31131,-68.32803],[44.31121,-68.32791],[44.31106,-68.32789],[44.31104,-68.32796],[44.31101,-68.32787],[44.31097,-68.3279],[44.3109,-68.32782],[44.31078,-68.32744],[44.31064,-68.32721],[44.31071,-68.32708],[44.31067,-68.32694],[44.31071,-68.32695],[44.31077,-68.32666],[44.3109,-68.32646],[44.31213,-68.3256],[44.3119,-68.32526],[44.3115,-68.325],[44.31105,-68.32415],[44.31084,-68.32396],[44.31076,-68.32356],[44.31054,-68.32327],[44.31025,-68.32331],[44.31015,-68.32277],[44.30995,-68.32287],[44.30974,-68.3226],[44.30982,-68.32218],[44.30965,-68.32188],[44.30907,-68.32152],[44.30861,-68.32153],[44.30757,-68.3211],[44.30714,-68.32123],[44.30649,-68.32007],[44.30587,-68.31972],[44.30539,-68.3193],[44.3049,-68.31926],[44.30464,-68.3197],[44.30426,-68.31993],[44.30375,-68.32067],[44.3035,-68.3205],[44.30332,-68.32066],[44.3025,-68.31977],[44.30264,-68.31944],[44.3025,-68.31925],[44.3026,-68.31874],[44.30137,-68.31779],[44.30112,-68.31732],[44.30123,-68.3169],[44.30046,-68.31684],[44.29977,-68.31651],[44.29966,-68.31627],[44.29962,-68.31497],[44.29953,-68.31479],[44.29973,-68.31433],[44.30002,-68.31436],[44.30034,-68.31461],[44.30059,-68.31464],[44.30084,-68.31453],[44.3011,-68.31473],[44.30125,-68.31462],[44.30168,-68.31457],[44.30193,-68.31429],[44.30324,-68.31424],[44.30358,-68.31373],[44.3042,-68.31335],[44.30452,-68.31356],[44.30561,-68.31348],[44.30605,-68.3139],[44.30631,-68.31362],[44.30641,-68.31334],[44.30684,-68.3135],[44.30698,-68.31349],[44.30711,-68.31407],[44.30734,-68.31417],[44.30738,-68.31434],[44.30725,-68.31456],[44.3071,-68.31558],[44.30721,-68.31637],[44.3072,-68.31673],[44.30717,-68.31679],[44.30705,-68.31683],[44.30686,-68.31697],[44.30686,-68.31697],[44.30676,-68.31684],[44.30676,-68.31684],[44.30686,-68.31697],[44.30686,-68.31697],[44.30705,-68.31683],[44.30722,-68.31691],[44.30735,-68.31708],[44.30742,-68.31744],[44.30759,-68.31773],[44.30768,-68.31808],[44.30781,-68.31804],[44.3079,-68.31809],[44.30813,-68.31831],[44.30819,-68.31846],[44.3084,-68.31858],[44.30855,-68.31881],[44.30929,-68.31897],[44.3094,-68.3192],[44.31035,-68.31978],[44.3105,-68.31983],[44.3107,-68.31974],[44.3109,-68.31991],[44.31102,-68.3199],[44.311,-68.31986],[44.31107,-68.3199],[44.31112,-68.31983],[44.31123,-68.31944],[44.31115,-68.31926],[44.31115,-68.31894],[44.31127,-68.31885],[44.31131,-68.31863],[44.31139,-68.31854],[44.31138,-68.31796],[44.31151,-68.31779],[44.31166,-68.31782],[44.3118,-68.31762],[44.31211,-68.3175],[44.31228,-68.31729],[44.31261,-68.31711],[44.31268,-68.31692],[44.31282,-68.31685],[44.31335,-68.31684],[44.31363,-68.31666],[44.31399,-68.31661],[44.31463,-68.31698],[44.3149,-68.31732],[44.31525,-68.31751],[44.31543,-68.31754],[44.31697,-68.31728],[44.31746,-68.31754],[44.31832,-68.31676],[44.31906,-68.31651],[44.31967,-68.31702],[44.32084,-68.31668],[44.32201,-68.31676],[44.32262,-68.31634],[44.32336,-68.31745],[44.32403,-68.31822],[44.32379,-68.32037],[44.3233,-68.32252],[44.32403,-68.3244],[44.32452,-68.32466],[44.32379,-68.32586],[44.32458,-68.32758],[44.32373,-68.33033],[44.32194,-68.33101],[44.32173,-68.33083],[44.32139,-68.33073],[44.32117,-68.33049],[44.32093,-68.33046],[44.32086,-68.33051],[44.32076,-68.33038],[44.32051,-68.33052],[44.32041,-68.33046],[44.32023,-68.33052],[44.32008,-68.33036],[44.32005,-68.33041],[44.31995,-68.33032],[44.31988,-68.33042],[44.31956,-68.33053],[44.31933,-68.33055],[44.31922,-68.33048],[44.31906,-68.33064],[44.31873,-68.33073],[44.31867,-68.33062],[44.31857,-68.33067],[44.31829,-68.33047],[44.318,-68.33044],[44.31761,-68.33022],[44.31725,-68.33022],[44.31727,-68.3301],[44.31713,-68.32979],[44.31719,-68.32958],[44.31698,-68.32941],[44.31689,-68.3294],[44.31681,-68.3295],[44.31665,-68.32949],[44.31611,-68.32924],[44.31606,-68.3293],[44.31573,-68.32925],[44.31543,-68.32936],[44.31531,-68.32919],[44.31503,-68.32901],[44.31486,-68.32868],[44.31452,-68.3286],[44.31441,-68.32847],[44.31435,-68.32808],[44.31428,-68.32792],[44.31417,-68.3279],[44.31413,-68.3278],[44.31396,-68.32772],[44.31379,-68.32771],[44.31375,-68.32779],[44.31307,-68.32765],[44.31283,-68.32753],[44.31277,-68.32738],[44.3123,-68.32689],[44.31212,-68.32684],[44.31208,-68.32667],[44.31221,-68.32606],[44.31212,-68.32565],[44.3109,-68.32646],[44.31084,-68.32655],[44.31077,-68.32666],[44.31072,-68.32682],[44.31071,-68.32695],[44.31067,-68.32694],[44.31071,-68.32708],[44.31066,-68.32711],[44.31064,-68.32721],[44.3109,-68.32782],[44.31096,-68.32784],[44.31097,-68.3279],[44.31101,-68.32787],[44.31104,-68.32796],[44.31106,-68.32789],[44.31113,-68.3279],[44.31121,-68.32791],[44.31131,-68.32803],[44.3114,-68.32803],[44.31145,-68.32799],[44.31155,-68.32806],[44.31157,-68.32801],[44.31161,-68.32801],[44.31174,-68.32807],[44.31186,-68.32838],[44.31185,-68.3286],[44.3119,-68.32862],[44.31195,-68.32872],[44.31198,-68.3288],[44.31198,-68.32888],[44.31225,-68.32913],[44.31228,-68.32914],[44.31233,-68.32927],[44.31232,-68.32931],[44.31229,-68.32928],[44.31232,-68.32962],[44.31226,-68.32973],[44.31226,-68.32981],[44.31233,-68.32999],[44.31236,-68.33007],[44.31232,-68.33015],[44.31234,-68.33029],[44.31228,-68.33034],[44.31221,-68.33052],[44.31223,-68.33065],[44.31175,-68.3311],[44.31175,-68.3311],[44.31175,-68.3311],[44.31175,-68.3311],[44.312,-68.33263],[44.31076,-68.33215],[44.30921,-68.3319],[44.30869,-68.3317],[44.30869,-68.33175],[44.30869,-68.33175],[44.30872,-68.33205],[44.30876,-68.33226],[44.30882,-68.33244],[44.30886,-68.3325],[44.30912,-68.3328],[44.30975,-68.33306],[44.31004,-68.33357],[44.3104,-68.33495],[44.31056,-68.33616],[44.31091,-68.3365],[44.31304,-68.33688],[44.31342,-68.33681],[44.31406,-68.33647],[44.31428,-68.33646],[44.31487,-68.33671],[44.31493,-68.33655],[44.31509,-68.33665],[44.31522,-68.33717],[44.31554,-68.33749],[44.31566,-68.33771],[44.31613,-68.33859],[44.31591,-68.33882],[44.31535,-68.33873],[44.31537,-68.3391],[44.31571,-68.33955],[44.31591,-68.33957],[44.31591,-68.33976],[44.31544,-68.33976],[44.31549,-68.33992],[44.31576,-68.34004],[44.31556,-68.34014],[44.31593,-68.34065],[44.31584,-68.34068],[44.31592,-68.3408],[44.31583,-68.34087],[44.31611,-68.34097],[44.31641,-68.34087],[44.31635,-68.34113],[44.31646,-68.34222],[44.31631,-68.34266],[44.31573,-68.343],[44.31567,-68.34305],[44.31534,-68.34342],[44.31536,-68.34342],[44.31537,-68.34354],[44.31537,-68.34354],[44.31509,-68.34345],[44.31493,-68.34332],[44.3141,-68.34299],[44.31319,-68.3429],[44.31164,-68.34288],[44.31138,-68.34309],[44.30937,-68.34256],[44.30568,-68.34196],[44.3053,-68.34164],[44.30496,-68.34158],[44.30452,-68.34133],[44.30433,-68.34133],[44.30373,-68.34099],[44.30306,-68.34083],[44.30252,-68.34175],[44.30263,-68.34305],[44.30223,-68.34277],[44.30198,-68.34185],[44.30193,-68.34259],[44.30199,-68.34292],[44.30175,-68.34363],[44.302,-68.344],[44.30203,-68.34445],[44.30223,-68.34507],[44.30215,-68.34532],[44.30199,-68.34551],[44.30163,-68.34568],[44.3015,-68.34593],[44.30131,-68.34594],[44.30131,-68.34594],[44.30174,-68.34775],[44.30166,-68.3477],[44.30173,-68.34683],[44.30164,-68.34654],[44.30139,-68.34622],[44.30137,-68.34594],[44.30131,-68.34594],[44.30138,-68.34688],[44.30123,-68.34725],[44.30097,-68.34725],[44.30077,-68.34698],[44.30036,-68.34683],[44.29978,-68.34743],[44.2997,-68.34778],[44.29965,-68.34836],[44.29959,-68.34847],[44.2996,-68.3492],[44.29971,-68.34959],[44.30023,-68.34987],[44.30007,-68.35046],[44.30013,-68.35079],[44.30011,-68.35176],[44.30018,-68.35219],[44.30025,-68.35233],[44.30143,-68.3535],[44.30153,-68.35395],[44.3014,-68.354],[44.30142,-68.35395],[44.30135,-68.35391],[44.30116,-68.35392],[44.30133,-68.35431],[44.30124,-68.35436],[44.30168,-68.35469],[44.30182,-68.35463],[44.30177,-68.35471],[44.30229,-68.35518],[44.30226,-68.35525],[44.30235,-68.35531],[44.30227,-68.35535],[44.30234,-68.35542],[44.30225,-68.35542],[44.30239,-68.35551],[44.30238,-68.35576],[44.30248,-68.35576],[44.30252,-68.35586],[44.30271,-68.35589],[44.30294,-68.3561],[44.30283,-68.35618],[44.30261,-68.35606],[44.30245,-68.35614],[44.30252,-68.35625],[44.30261,-68.35621],[44.30259,-68.35628],[44.30247,-68.35631],[44.30253,-68.35635],[44.30259,-68.3566],[44.30278,-68.35666],[44.3029,-68.357],[44.30376,-68.35739],[44.30461,-68.35761],[44.30473,-68.35782],[44.30517,-68.35812],[44.30541,-68.35842],[44.30541,-68.35852],[44.30553,-68.35855],[44.30549,-68.35861],[44.3056,-68.35866],[44.30565,-68.35884],[44.30588,-68.35892],[44.30595,-68.35902],[44.30606,-68.35902],[44.30597,-68.35918],[44.30612,-68.35914],[44.30613,-68.3592],[44.30637,-68.35925],[44.30649,-68.35939],[44.30672,-68.35946],[44.30664,-68.35982],[44.30667,-68.3601],[44.30659,-68.36027],[44.30664,-68.36035],[44.30654,-68.36037],[44.30689,-68.36094],[44.30684,-68.36101],[44.30689,-68.36116],[44.30687,-68.36137],[44.30679,-68.36137],[44.30678,-68.36144],[44.30668,-68.36148],[44.30678,-68.36167],[44.30669,-68.36185],[44.30656,-68.36182],[44.30654,-68.36187],[44.3064,-68.36168],[44.30635,-68.36189],[44.30623,-68.36187],[44.30593,-68.36162],[44.30595,-68.36167],[44.3058,-68.36162],[44.30565,-68.36169],[44.30558,-68.36165],[44.30557,-68.36173],[44.30545,-68.3618],[44.3051,-68.36156],[44.30491,-68.3617],[44.30501,-68.36186],[44.30519,-68.3619],[44.30557,-68.36244],[44.30552,-68.36271],[44.30557,-68.36281],[44.30535,-68.36334],[44.30539,-68.36352],[44.30524,-68.36363],[44.30524,-68.36363],[44.30515,-68.36354],[44.30515,-68.36354],[44.30524,-68.36363],[44.3054,-68.36402],[44.3056,-68.36405],[44.30582,-68.36426],[44.30633,-68.36458],[44.30637,-68.36505],[44.30649,-68.36529],[44.30661,-68.36538],[44.30662,-68.36565],[44.30651,-68.36599],[44.30628,-68.36619],[44.30605,-68.36621],[44.30593,-68.36642],[44.30592,-68.36664],[44.30609,-68.36681],[44.30556,-68.36726],[44.30556,-68.36764],[44.30534,-68.36804],[44.30549,-68.36819],[44.30513,-68.36868],[44.30494,-68.3688],[44.30502,-68.36924],[44.30497,-68.36934],[44.30483,-68.36934],[44.30475,-68.3696],[44.30478,-68.36971],[44.30459,-68.36998],[44.30471,-68.37025],[44.30451,-68.37049],[44.30449,-68.37078],[44.30431,-68.37099],[44.30432,-68.37123],[44.3042,-68.3712],[44.30401,-68.37132],[44.30371,-68.37173],[44.3037,-68.37186],[44.30358,-68.37193],[44.30354,-68.37213],[44.30106,-68.37221],[44.29953,-68.37316],[44.29904,-68.37281],[44.29781,-68.37401],[44.29732,-68.37599],[44.2967,-68.37625],[44.29566,-68.3753],[44.29424,-68.37513],[44.29338,-68.37341],[44.29302,-68.3711],[44.29566,-68.36569],[44.29474,-68.36217],[44.29627,-68.35908],[44.29676,-68.35728],[44.29916,-68.35299],[44.29922,-68.3517],[44.30033,-68.3505],[44.30223,-68.34784],[44.30469,-68.34869],[44.30641,-68.34955],[44.30923,-68.34835],[44.30917,-68.34784],[44.30927,-68.34782],[44.3095,-68.34744],[44.30979,-68.34742],[44.30988,-68.34731],[44.31005,-68.34728],[44.3103,-68.34635],[44.31043,-68.34621],[44.31061,-68.34564],[44.31083,-68.34532],[44.31094,-68.34541],[44.31111,-68.34535],[44.31154,-68.34542],[44.31187,-68.34517],[44.3121,-68.3448],[44.31249,-68.34457],[44.313,-68.34453],[44.31311,-68.34435],[44.31348,-68.34425],[44.31358,-68.34417],[44.31408,-68.34422],[44.31471,-68.3444],[44.31478,-68.34432],[44.31505,-68.34448],[44.3152,-68.3447],[44.31591,-68.34441],[44.31583,-68.34403],[44.31534,-68.34383],[44.31536,-68.34354],[44.31544,-68.34324],[44.31557,-68.34307],[44.31607,-68.34289],[44.31643,-68.34239],[44.31645,-68.34172],[44.31639,-68.34093],[44.31589,-68.34087],[44.31594,-68.34079],[44.31583,-68.3407],[44.31594,-68.34066],[44.31553,-68.3401],[44.31556,-68.34012],[44.31574,-68.34006],[44.31572,-68.34005],[44.31551,-68.33993],[44.31544,-68.33979],[44.31547,-68.33979],[44.31547,-68.33979],[44.31591,-68.33973],[44.31591,-68.33973],[44.31593,-68.33973],[44.31592,-68.33958],[44.31588,-68.33957],[44.31588,-68.33957],[44.31567,-68.33954],[44.31555,-68.3394],[44.31536,-68.33906],[44.31533,-68.33878],[44.31538,-68.33879],[44.31583,-68.33885],[44.3159,-68.33881],[44.3159,-68.33881],[44.31606,-68.33873],[44.31612,-68.33857],[44.31564,-68.33775],[44.3155,-68.33744],[44.31531,-68.33722],[44.31517,-68.33697],[44.3151,-68.33665],[44.31495,-68.33655],[44.31487,-68.33672],[44.31427,-68.33642],[44.3137,-68.33659],[44.31342,-68.33682],[44.31306,-68.33689],[44.31095,-68.3365],[44.31055,-68.33616],[44.31036,-68.3347],[44.30993,-68.33342],[44.30961,-68.33299],[44.30886,-68.33266],[44.30871,-68.33187],[44.3087,-68.33187],[44.30869,-68.3317],[44.30872,-68.33171],[44.30921,-68.3319],[44.31012,-68.33206],[44.31012,-68.33206],[44.31098,-68.33221],[44.31134,-68.3323],[44.31201,-68.33263],[44.31215,-68.3327]]],"land":[[[[44.39473,-68.08385],[44.38912,-68.08419],[44.39106,-68.09168],[44.38739,-68.08584],[44.38645,-68.08537],[44.38973,-68.09384],[44.37682,-68.08841],[44.37187,-68.08858],[44.37174,-68.09333],[44.38414,-68.10378],[44.39366,-68.10076],[44.39911,-68.11031],[44.40595,-68.11354],[44.41905,-68.10806],[44.41944,-68.11227],[44.42717,-68.11648],[44.45781,-68.11935],[44.46876,-68.114],[44.4651,-68.09695],[44.47482,-68.10154],[44.47551,-68.10811],[44.48,-68.11445],[44.48,-68.08],[44.43436,-68.08],[44.43378,-68.08008],[44.43378,-68.08],[44.3896,-68.08],[44.39473,-68.08385]]],[[[44.47936,-68.12553],[44.48,-68.12613],[44.48,-68.12365],[44.47936,-68.12553]]],[[[44.47661,-68.13351],[44.4773,-68.13617],[44.48,-68.14097],[44.48,-68.1321],[44.47661,-68.13351]]],[[[44.47373,-68.16179],[44.47015,-68.1706],[44.47134,-68.19228],[44.47569,-68.18926],[44.47541,-68.17969],[44.48,-68.18257],[44.48,-68.16499],[44.47373,-68.16179]]],[[[44.47959,-68.23115],[44.46528,-68.22408],[44.46377,-68.23024],[44.48,-68.24988],[44.48,-68.23067],[44.47959,-68.23115]]],[[[44.48,-68.26311],[44.47204,-68.26723],[44.47085,-68.28173],[44.47775,-68.29326],[44.47216,-68.29558],[44.45921,-68.28428],[44.4622,-68.27969],[44.45951,-68.27293],[44.46408,-68.27226],[44.4585,-68.27005],[44.4526,-68.28109],[44.45016,-68.2965],[44.46288,-68.32315],[44.45008,-68.33026],[44.45394,-68.34578],[44.46285,-68.35414],[44.47384,-68.3558],[44.48,-68.35305],[44.48,-68.26311]]],[[[44.47833,-68.36233],[44.45945,-68.35401],[44.44379,-68.35497],[44.43945,-68.36273],[44.43021,-68.36735],[44.4304,-68.37333],[44.42406,-68.37354],[44.43186,-68.37818],[44.43596,-68.3937],[44.41777,-68.39218],[44.40863,-68.40344],[44.40865,-68.40845],[44.39868,-68.41463],[44.39628,-68.42253],[44.40134,-68.43411],[44.40876,-68.42903],[44.41468,-68.43345],[44.43032,-68.43133],[44.43696,-68.42482],[44.46444,-68.42885],[44.47053,-68.42733],[44.47004,-68.42073],[44.48,-68.42492],[44.48,-68.35882],[44.47833,-68.36233]]],[[[44.46694,-68.46859],[44.45406,-68.45868],[44.44662,-68.45821],[44.43986,-68.47157],[44.413,-68.45691],[44.39815,-68.46385],[44.38689,-68.46316],[44.38518,-68.45909],[44.37745,-68.46687],[44.37954,-68.47844],[44.389,-68.48254],[44.39959,-68.47919],[44.40461,-68.47256],[44.42927,-68.47896],[44.43181,-68.4741],[44.4452,-68.47696],[44.44655,-68.47196],[44.45137,-68.47279],[44.45589,-68.48123],[44.43291,-68.48931],[44.43038,-68.49739],[44.41499,-68.4986],[44.41461,-68.5],[44.48,-68.5],[44.48,-68.4688],[44.46694,-68.46859]]],[[[44.25444,-68.45998],[44.2601,-68.46243],[44.25673,-68.45407],[44.25431,-68.45784],[44.25444,-68.45998]]],[[[44.2692,-68.48716],[44.28231,-68.49258],[44.27995,-68.48332],[44.27014,-68.46876],[44.26411,-68.46953],[44.2692,-68.48716]]],[[[44.32199,-68.5],[44.37739,-68.5],[44.34489,-68.48758],[44.33155,-68.48841],[44.32021,-68.47796],[44.31155,-68.49019],[44.32185,-68.49939],[44.32199,-68.5]]],[[[44.29907,-68.4551],[44.31356,-68.45336],[44.31109,-68.44802],[44.29763,-68.45029],[44.29907,-68.4551]]],[[[44.36139,-68.42052],[44.35717,-68.41528],[44.35083,-68.41941],[44.35374,-68.42512],[44.34438,-68.42653],[44.34625,-68.43075],[44.33982,-68.43023],[44.34107,-68.43614],[44.33644,-68.43485],[44.3369,-68.42952],[44.32783,-68.42912],[44.32158,-68.44078],[44.32594,-68.44109],[44.32441,-68.44325],[44.32545,-68.4461],[44.33698,-68.44188],[44.33918,-68.44562],[44.33639,-68.45243],[44.33935,-68.45527],[44.34113,-68.45203],[44.34372,-68.45648],[44.34703,-68.45198],[44.34884,-68.45446],[44.35703,-68.45045],[44.36339,-68.43859],[44.37106,-68.43315],[44.37562,-68.42202],[44.36793,-68.42299],[44.36406,-68.41856],[44.36139,-68.42052]]],[[[44.20324,-68.48452],[44.20913,-68.4818],[44.20954,-68.48679],[44.21274,-68.4864],[44.21373,-68.47712],[44.20806,-68.47217],[44.20243,-68.47508],[44.20324,-68.48452]]],[[[44.2006,-68.4685],[44.20623,-68.4647],[44.20207,-68.45404],[44.19786,-68.45764],[44.2006,-68.4685]]],[[[44.22145,-68.48222],[44.22875,-68.48055],[44.22883,-68.47021],[44.22369,-68.46829],[44.21922,-68.47314],[44.22145,-68.48222]]],[[[44.45861,-68.15216],[44.46637,-68.161],[44.46296,-68.15066],[44.45779,-68.14572],[44.45861,-68.15216]]],[[[44.47127,-68.11079],[44.47068,-68.10931],[44.47263,-68.11702],[44.47654,-68.1201],[44.47706,-68.11692],[44.47127,-68.11079]]],[[[44.46758,-68.17426],[44.46349,-68.16617],[44.46564,-68.18115],[44.46868,-68.18275],[44.46758,-68.17426]]],[[[44.40642,-68.15904],[44.40064,-68.16652],[44.40316,-68.16933],[44.40855,-68.16437],[44.41212,-68.15913],[44.40897,-68.15727],[44.40642,-68.15904]]],[[[44.4134,-68.1204],[44.40666,-68.12137],[44.40696,-68.12833],[44.4182,-68.13391],[44.41888,-68.1307],[44.4134,-68.1204]]],[[[44.44248,-68.12506],[44.43478,-68.13329],[44.42739,-68.13418],[44.42551,-68.14038],[44.44431,-68.13962],[44.4501,-68.13471],[44.44777,-68.12899],[44.44248,-68.12506]]],[[[44.24239,-68.20421],[44.24671,-68.19754],[44.23948,-68.19277],[44.23709,-68.19796],[44.24239,-68.20421]]],[[[44.25559,-68.21278],[44.25751,-68.22139],[44.25198,-68.24081],[44.26559,-68.2381],[44.26681,-68.23013],[44.26382,-68.22879],[44.26308,-68.2153],[44.25559,-68.21278]]],[[[44.36069,-68.09654],[44.35403,-68.0957],[44.36133,-68.10464],[44.36454,-68.10399],[44.36442,-68.10008],[44.36069,-68.09654]]],[[[44.40329,-68.12909],[44.3891,-68.1253],[44.37758,-68.14036],[44.38544,-68.14861],[44.39343,-68.14676],[44.40203,-68.13622],[44.40329,-68.12909]]],[[[44.39716,-68.20213],[44.39883,-68.21343],[44.39988,-68.20951],[44.40031,-68.20312],[44.39716,-68.20213]]],[[[44.40986,-68.39376],[44.41239,-68.38801],[44.40622,-68.38467],[44.40355,-68.38953],[44.40986,-68.39376]]],[[[44.43147,-68.33836],[44.42879,-68.34083],[44.43638,-68.34575],[44.43445,-68.34161],[44.43147,-68.33836]]],[[[44.27264,-68.2709],[44.27545,-68.26979],[44.2766,-68.24871],[44.27171,-68.2468],[44.26984,-68.25451],[44.27264,-68.2709]]],[[[44.27765,-68.29252],[44.2761,-68.29094],[44.27735,-68.30398],[44.2833,-68.3041],[44.28157,-68.29909],[44.27765,-68.29252]]],[[[44.2869,-68.43378],[44.29308,-68.4364],[44.2892,-68.43055],[44.28587,-68.43183],[44.2869,-68.43378]]],[[[44.1755,-68.24892],[44.17674,-68.24212],[44.1743,-68.2402],[44.17055,-68.24468],[44.1755,-68.24892]]],[[[44.17561,-68.35053],[44.17461,-68.35411],[44.18587,-68.34935],[44.18221,-68.33637],[44.17298,-68.33773],[44.17,-68.34313],[44.17,-68.34924],[44.17561,-68.35053]]],[[[44.19536,-68.35047],[44.18428,-68.36314],[44.18082,-68.37053],[44.18288,-68.37767],[44.19423,-68.37005],[44.1992,-68.35567],[44.19536,-68.35047]]],[[[44.20169,-68.33348],[44.19837,-68.33655],[44.20759,-68.33413],[44.20651,-68.32451],[44.19773,-68.31444],[44.19892,-68.32139],[44.19409,-68.32786],[44.19947,-68.33374],[44.20169,-68.33348]]],[[[44.192,-68.3434],[44.19722,-68.33674],[44.1927,-68.33162],[44.19004,-68.3386],[44.192,-68.3434]]],[[[44.40322,-68.34821],[44.40543,-68.35042],[44.4039,-68.35588],[44.40961,-68.36451],[44.42985,-68.3674],[44.42408,-68.36336],[44.4281,-68.34845],[44.42042,-68.3514],[44.41969,-68.34823],[44.42254,-68.34726],[44.42201,-68.33806],[44.42682,-68.33737],[44.42567,-68.32835],[44.42192,-68.32407],[44.42177,-68.322],[44.42081,-68.32166],[44.4205,-68.32039],[44.42102,-68.31907],[44.42572,-68.3274],[44.42677,-68.33195],[44.43128,-68.33363],[44.44446,-68.31922],[44.43783,-68.2991],[44.43155,-68.29311],[44.43269,-68.29102],[44.42824,-68.29102],[44.43185,-68.28597],[44.43094,-68.28409],[44.43299,-68.28437],[44.43378,-68.28326],[44.43378,-68.28448],[44.43404,-68.28451],[44.43965,-68.26918],[44.43602,-68.25633],[44.43011,-68.24497],[44.42099,-68.24279],[44.41821,-68.25001],[44.41308,-68.25051],[44.40488,-68.23275],[44.38999,-68.21525],[44.39263,-68.20689],[44.39063,-68.20122],[44.38251,-68.19531],[44.37983,-68.19801],[44.38002,-68.19252],[44.37658,-68.19454],[44.36893,-68.18434],[44.35414,-68.18261],[44.34536,-68.17425],[44.34223,-68.17804],[44.32856,-68.17348],[44.32521,-68.17773],[44.32873,-68.1841],[44.31769,-68.19088],[44.30728,-68.18909],[44.30699,-68.19392],[44.32271,-68.20189],[44.30879,-68.19968],[44.29808,-68.2081],[44.29643,-68.21445],[44.29925,-68.21847],[44.2907,-68.22451],[44.2881,-68.23205],[44.29605,-68.24118],[44.2921,-68.24531],[44.28807,-68.24351],[44.29325,-68.25431],[44.28792,-68.26003],[44.29065,-68.27659],[44.30236,-68.28382],[44.29539,-68.28602],[44.28808,-68.27977],[44.28519,-68.28342],[44.29012,-68.29346],[44.28743,-68.29515],[44.29401,-68.29942],[44.29448,-68.30451],[44.30154,-68.30131],[44.31754,-68.30633],[44.33947,-68.30424],[44.34421,-68.30898],[44.3483,-68.30786],[44.34263,-68.30221],[44.35369,-68.30708],[44.35958,-68.30523],[44.36371,-68.30911],[44.35962,-68.31202],[44.36031,-68.31952],[44.35698,-68.32135],[44.3619,-68.32527],[44.36892,-68.32193],[44.36845,-68.32945],[44.36229,-68.3297],[44.36257,-68.33345],[44.35486,-68.33664],[44.35843,-68.32706],[44.35482,-68.32513],[44.34637,-68.32773],[44.34609,-68.32362],[44.32235,-68.31169],[44.31018,-68.31922],[44.30678,-68.31231],[44.29822,-68.30948],[44.2989,-68.31729],[44.29309,-68.31322],[44.29518,-68.31825],[44.28764,-68.32118],[44.29147,-68.3285],[44.28516,-68.32611],[44.2867,-68.3182],[44.27636,-68.3101],[44.27491,-68.31346],[44.27931,-68.32348],[44.27147,-68.32576],[44.26767,-68.29956],[44.24699,-68.29059],[44.24339,-68.29891],[44.2366,-68.30128],[44.23661,-68.30798],[44.22809,-68.31074],[44.22944,-68.31597],[44.22515,-68.31814],[44.23088,-68.32576],[44.22739,-68.32681],[44.22775,-68.32295],[44.22465,-68.32176],[44.22488,-68.3302],[44.22164,-68.33441],[44.22281,-68.3397],[44.23405,-68.34822],[44.24052,-68.34416],[44.25279,-68.3495],[44.24788,-68.35028],[44.2497,-68.35544],[44.25009,-68.35789],[44.24995,-68.35887],[44.24647,-68.35291],[44.24461,-68.35573],[44.23785,-68.35163],[44.23594,-68.35971],[44.22682,-68.36461],[44.23379,-68.36871],[44.23622,-68.36236],[44.24036,-68.36771],[44.24132,-68.36565],[44.24403,-68.36475],[44.24582,-68.36781],[44.24159,-68.36641],[44.24162,-68.36929],[44.24719,-68.37737],[44.25549,-68.37656],[44.25581,-68.38039],[44.24511,-68.38975],[44.25232,-68.39396],[44.25691,-68.38837],[44.26203,-68.39685],[44.25185,-68.40253],[44.25763,-68.40681],[44.26143,-68.40447],[44.27453,-68.42],[44.27417,-68.41215],[44.27859,-68.41261],[44.27844,-68.4091],[44.2805,-68.40856],[44.28388,-68.39933],[44.28535,-68.39934],[44.28239,-68.40569],[44.28636,-68.41636],[44.28429,-68.42363],[44.30306,-68.43149],[44.30695,-68.42702],[44.31229,-68.43068],[44.3133,-68.42692],[44.30943,-68.42303],[44.3107,-68.4198],[44.31585,-68.42314],[44.31903,-68.41971],[44.3181,-68.41293],[44.321,-68.41573],[44.32323,-68.41181],[44.32034,-68.40769],[44.33272,-68.40876],[44.34158,-68.40087],[44.33843,-68.40725],[44.34087,-68.40631],[44.34315,-68.41194],[44.33321,-68.41715],[44.33663,-68.4214],[44.33885,-68.4169],[44.34583,-68.41717],[44.35645,-68.41012],[44.35406,-68.40511],[44.34839,-68.40914],[44.34586,-68.40923],[44.364,-68.39808],[44.35649,-68.39431],[44.3575,-68.39037],[44.35059,-68.3933],[44.35441,-68.38951],[44.36032,-68.38927],[44.36804,-68.39509],[44.37008,-68.39203],[44.37601,-68.39787],[44.38141,-68.37806],[44.38553,-68.37477],[44.39002,-68.37751],[44.39349,-68.37105],[44.38574,-68.36028],[44.40156,-68.35265],[44.40322,-68.34821]]],[[[44.24009,-68.27683],[44.25263,-68.27239],[44.25881,-68.275],[44.26013,-68.2607],[44.25737,-68.25038],[44.2569,-68.25788],[44.25205,-68.2608],[44.2433,-68.2577],[44.24092,-68.24666],[44.24992,-68.24905],[44.25124,-68.25474],[44.25223,-68.25009],[44.24628,-68.24285],[44.24168,-68.24487],[44.23985,-68.24007],[44.23542,-68.24923],[44.23717,-68.26134],[44.23374,-68.26638],[44.24009,-68.27683]]],[[[44.17931,-68.46994],[44.18446,-68.46405],[44.18076,-68.46414],[44.18292,-68.45626],[44.17778,-68.44726],[44.17331,-68.44913],[44.1705,-68.44526],[44.17,-68.44658],[44.17,-68.46955],[44.17931,-68.46994]]],[[[44.17294,-68.43735],[44.17,-68.43933],[44.17,-68.44169],[44.17294,-68.43735]]],[[[44.1733,-68.42113],[44.19077,-68.4249],[44.1875,-68.41316],[44.17593,-68.40793],[44.17,-68.39695],[44.17,-68.43138],[44.1733,-68.42113]]]]};
+(()=>{
+/* ---------- data ---------- */
+const G = {
+  cadillac:{n:"Cadillac Massif", tip:"Cadillac South Ridge past Dike Peak to the summit, across the Notch to Dorr, then north along Dorr's ridge to Kebo."},
+  champlain:{n:"Ocean Ridge", tip:"Beachcroft Path over Huguenot Head to Champlain, then south along the ridge to the Beehive and Gorham."},
+  bubbles:{n:"Pemetic & the Bubbles", tip:"From the Bubble Rock lot: South Bubble, North Bubble, out to Conners Nubble, then across to Pemetic."},
+  triad:{n:"Triad & Day", tip:"A short southern loop from Wildwood Stables. Day is the only summit with a carriage road to the top."},
+  sargent:{n:"Sargent Massif", tip:"Jordan Cliffs or Spring Trail to Penobscot, past Sargent Pond to Sargent and Gilmore, back down the South Ridge over Cedar Swamp."},
+  middle:{n:"Middle Peaks", tip:"Bald Peak and Parkman from the Route 198 lot; Norumbega is just across the road above Somes Sound."},
+  somes:{n:"Somes Sound West", tip:"Acadia Mountain loop to St. Sauveur, south over Valley Peak, finish on Flying Mountain above the sound."},
+  western:{n:"Western Mountain", tip:"From Long Pond: Mansell, through Great Notch over Knight Nubble, to Bernard."},
+  beech:{n:"Beech & the Cliffs", tip:"Beech Mountain fire tower loop, then the ladder trail on Beech Cliff above Echo Lake."}
+};
+// e/p = Peakery elevation & prominence (ft). ap = position placed by hand (not in the route file).
+// lb = label side on the map: r, l, b, t. pk = Peakery slug.
+const P = [
+ {id:"cadillac",n:"Cadillac Mountain",s:"Cadillac",o:"Green Mountain",e:1528,p:1528,lat:44.35115,lon:-68.22645,g:"cadillac",lb:"l",pk:"cadillac-mountain-maine",
+  note:"The park's high point and the tallest summit within 25 miles of the Atlantic coast between Nova Scotia and Mexico. A road reaches the top, but four trails climb it from the bottom.",
+  t:["North Ridge","South Ridge","Gorge Path","West Face","Summit Loop"]},
+ {id:"sargent",n:"Sargent Mountain",s:"Sargent",o:null,e:1379,p:979,lat:44.34337,lon:-68.27342,g:"sargent",lb:"r",pk:"sargent-mountain-maine",
+  note:"Second highest in the park, west of Cadillac across Eagle Lake and Bubble Pond. A broad open granite dome with routes from every direction.",
+  t:["Grandgent","Hadlock Brook","Maple Spring","East Cliffs","South Ridge"]},
+ {id:"dorr",n:"Dorr Mountain",s:"Dorr",o:"Dry Mountain",e:1265,p:225,lat:44.35448,lon:-68.21609,g:"cadillac",lb:"t",pk:"dorr-mountain-maine",
+  note:"Cadillac's eastern neighbor across the Notch. Its east face is laced with old stone-step paths, including the Homans Path and Emery Path.",
+  t:["Ladder Trail","Emery Path","Homans Path","North Ridge","South Ridge"]},
+ {id:"pemetic",n:"Pemetic Mountain",s:"Pemetic",o:null,e:1247,p:787,lat:44.33588,lon:-68.24561,g:"bubbles",lb:"r",pk:"pemetic-mountain-maine",
+  note:"Pemetic was the Wabanaki name for Mount Desert Island. The mountain sits between Jordan Pond and Bubble Pond with a steep northwest approach.",
+  t:["South Ridge","North Ridge","Northwest Trail"]},
+ {id:"penobscot",n:"Penobscot Mountain",s:"Penobscot",o:"Jordan Mountain",e:1196,p:136,lat:44.33300,lon:-68.26681,g:"sargent",lb:"r",pk:"penobscot-mountain-maine",
+  note:"Long open ridge west of Jordan Pond. The Jordan Cliffs Trail traverses exposed ledges with iron rungs and handrails.",
+  t:["Spring Trail","Penobscot Mtn Trail","Jordan Cliffs"]},
+ {id:"dike",n:"Dike Peak",s:"Dike Pk",o:null,e:1082,p:82,lat:44.3405,lon:-68.2255,g:"cadillac",lb:"r",pk:"dike-peak-maine",ap:1,
+  note:"A named knob on Cadillac's southern flank near Eagles Crag. Easy to walk past; Peakery counts it as its own summit.",
+  t:["Cadillac South Ridge area"]},
+ {id:"bernard",n:"Bernard Mountain",s:"Bernard",o:"Western Mountain, west peak",e:1060,p:1000,lat:44.30048,lon:-68.37277,g:"western",lb:"l",pk:"bernard-mountain-maine",
+  note:"Tallest point of Western Mountain on the quiet side, with the second-biggest prominence in the park. Wooded summit; the views come on the ledges below it.",
+  t:["Bernard Mtn Trail","Sluiceway","West Ledge"]},
+ {id:"champlain",n:"Champlain Mountain",s:"Champlain",o:"Newport Mountain",e:1058,p:920,lat:44.35117,lon:-68.19428,g:"champlain",lb:"r",pk:"champlain-mountain-maine",
+  note:"Easternmost big peak, above the Park Loop Road and Frenchman Bay. Home of the Precipice Trail, Acadia's most famous iron-rung climb.",
+  t:["Precipice","Beachcroft Path","North Ridge","South Ridge"]},
+ {id:"gilmore",n:"Gilmore Peak",s:"Gilmore",o:null,e:1038,p:20,lat:44.33883,lon:-68.28003,g:"sargent",lb:"r",pk:"gilmore-peak-maine",
+  note:"A small knob on the shoulder of Sargent with about 20 feet of prominence. Reached on the Grandgent Trail from Parkman.",
+  t:["Grandgent","Giant Slide loop"]},
+ {id:"bald",n:"Bald Peak",s:"Bald Peak",o:null,e:974,p:180,lat:44.33545,lon:-68.28385,g:"middle",lb:"l",pk:"bald-peak-maine-974ft",
+  note:"Fully open summit with views south over the Hadlock Ponds to the Cranberry Isles. Pairs naturally with Parkman.",
+  t:["Bald Peak Trail","Hadlock Brook"]},
+ {id:"knight",n:"Knight Nubble",s:"Knight",o:null,e:960,p:80,lat:44.3035,lon:-68.3665,g:"western",lb:"b",pk:"knight-nubble-maine",ap:1,
+  note:"A small forested companion to Bernard, crossed between Bernard and Mansell by way of Great Notch.",
+  t:["Bernard Mtn Trail","Great Notch"]},
+ {id:"mansell",n:"Mansell Mountain",s:"Mansell",o:"Western Mountain, east peak",e:949,p:309,lat:44.30687,lon:-68.36170,g:"western",lb:"r",pk:"mansell-mountain-maine",
+  note:"The eastern summit of Western Mountain. The Perpendicular Trail climbs from Long Pond on hundreds of stone steps.",
+  t:["Perpendicular","Mansell Mtn Trail","Razorback"]},
+ {id:"cedar",n:"Cedar Swamp Mountain",s:"Cedar Swamp",o:null,e:942,p:102,lat:44.32821,lon:-68.27634,g:"sargent",lb:"l",pk:"cedar-swamp-mountain-maine",
+  note:"Tucked into the middle peaks with views into the amphitheater to the southeast. Usually reached along the Sargent South Ridge Trail.",
+  t:["Sargent South Ridge","Amphitheater"]},
+ {id:"parkman",n:"Parkman Mountain",s:"Parkman",o:"Little Brown Mountain",e:941,p:80,lat:44.33815,lon:-68.28587,g:"middle",lb:"l",pk:"parkman-mountain-maine",
+  note:"Open summit just north of Bald Peak. A good start for the Bald, Parkman and Gilmore triple.",
+  t:["Parkman Mtn Trail","Grandgent"]},
+ {id:"nbubble",n:"North Bubble",s:"N. Bubble",o:null,e:872,p:412,lat:44.34438,lon:-68.25703,g:"bubbles",lb:"l",pk:"north-bubble-maine",
+  note:"The taller of the two Bubbles seen from Jordan Pond House, with a direct view down the length of the pond.",
+  t:["North Bubble Trail","Jordan Pond Carry"]},
+ {id:"norumbega",n:"Norumbega Mountain",s:"Norumbega",o:"Brown Mountain",e:852,p:492,lat:44.32446,lon:-68.29599,g:"middle",lb:"l",pk:"norumbega-mountain-maine",
+  note:"Relatively isolated peak on the east shore of Somes Sound. The steep Goat Trail climbs it from the north.",
+  t:["Goat Trail","Norumbega Mtn Trail"]},
+ {id:"beech",n:"Beech Mountain",s:"Beech",o:null,e:841,p:710,lat:44.31135,lon:-68.34573,g:"beech",lb:"l",pk:"beech-mountain-maine",
+  note:"Between Long Pond and Echo Lake, topped by a steel fire tower. Several short loops reach the summit.",
+  t:["Beech Mtn Loop","South Ridge","West Ridge","Valley Trail"]},
+ {id:"sbubble",n:"South Bubble",s:"S. Bubble",o:null,e:768,p:128,lat:44.33935,lon:-68.25359,g:"bubbles",lb:"l",pk:"south-bubble-maine",
+  note:"Home of Bubble Rock, a glacial erratic balanced on the cliff edge above Jordan Pond.",
+  t:["South Bubble Trail"]},
+ {id:"huguenot",n:"Huguenot Head",s:"Huguenot",o:"Picket Mountain",e:731,p:60,lat:44.35319,lon:-68.20021,g:"champlain",lb:"b",pk:"huguenot-head-maine",
+  note:"Companion knob to Champlain. The Beachcroft Path passes just below the summit on its granite stairway, so a short scramble tags the top.",
+  t:["Beachcroft Path"]},
+ {id:"triad",n:"The Triad",s:"Triad",o:null,e:690,p:110,lat:44.32078,lon:-68.23651,g:"triad",lb:"r",pk:"the-triad-maine",
+  note:"A peak with three high points south of Pemetic and north of Day Mountain.",
+  t:["Triad Trail","Hunters Brook"]},
+ {id:"acadia",n:"Acadia Mountain",s:"Acadia",o:"Robinson Mountain",e:680,p:440,lat:44.32362,lon:-68.32301,g:"somes",lb:"r",pk:"acadia-mountain-maine",
+  note:"The park's namesake peak, and the only one on the island whose ridge runs east to west. Views straight down Somes Sound.",
+  t:["Acadia Mtn Trail"]},
+ {id:"sauveur",n:"Saint Sauveur Mountain",s:"St. Sauveur",o:"Dog Mountain",e:679,p:540,lat:44.31017,lon:-68.32307,g:"somes",lb:"t",pk:"saint-sauveur-mountain-maine",
+  note:"Just south of Acadia Mountain on the quiet side, with cliffs dropping toward Somes Sound.",
+  t:["St. Sauveur Trail","Ledge Trail"]},
+ {id:"beechcliff",n:"Beech Cliff",s:"Beech Cliff",o:null,e:600,p:80,lat:44.3155,lon:-68.3375,g:"beech",lb:"t",pk:"beech-cliff-maine",ap:1,
+  note:"The high point of the cliffs on Beech Mountain's east side, straight above Echo Lake. The Beech Cliff Trail climbs it on ladders and iron rungs.",
+  t:["Beech Cliff Trail","Canada Cliff loop"]},
+ {id:"conners",n:"Conners Nubble",s:"Conners",o:null,e:591,p:291,lat:44.3540,lon:-68.2560,g:"bubbles",lb:"r",pk:"conners-nubble-maine",ap:1,
+  note:"A minor peak north of North Bubble with good views down onto Eagle Lake. The trail mixes a lakeside walk, boulder scrambling and short forest sections.",
+  t:["Conners Nubble Trail","North Bubble Trail"]},
+ {id:"day",n:"Day Mountain",s:"Day",o:null,e:583,p:283,lat:44.30975,lon:-68.23231,g:"triad",lb:"r",pk:"day-mountain-maine-583ft",
+  note:"Low peak near Seal Harbor. The only summit in the park with a carriage road to the top.",
+  t:["Day Mtn Trail","Carriage road"]},
+ {id:"beehive",n:"The Beehive",s:"Beehive",o:null,e:540,p:118,lat:44.33379,lon:-68.18819,g:"champlain",lb:"r",pk:"the-beehive-maine",
+  note:"Short and steep above Sand Beach. The front side is an iron-rung climb; the Bowl Trail is the gentler way up the back.",
+  t:["Beehive Trail","Bowl Trail"]},
+ {id:"gorham",n:"Gorham Mountain",s:"Gorham",o:null,e:525,p:162,lat:44.32710,lon:-68.19325,g:"champlain",lb:"r",pk:"gorham-mountain-maine",
+  note:"Right above the Ocean Path, with open views of the Atlantic, Sand Beach and Otter Cliffs.",
+  t:["Gorham Mtn Trail","Cadillac Cliffs"]},
+ {id:"valley",n:"Valley Peak",s:"Valley Pk",o:null,e:521,p:1,lat:44.3065,lon:-68.3195,g:"somes",lb:"r",pk:"valley-peak-maine",ap:1,
+  note:"Effectively the south end of St. Sauveur's ridge, with 1 foot of prominence by Peakery's count, but it has fine views down onto Somes Sound.",
+  t:["Valley Peak Trail","Flying Mtn Trail"]},
+ {id:"kebo",n:"Kebo Mountain",s:"Kebo",o:null,e:407,p:67,lat:44.37369,lon:-68.21883,g:"cadillac",lb:"r",pk:"kebo-mountain-maine",
+  note:"A minor wooded summit at the north end of Dorr's ridge, close to Bar Harbor.",
+  t:["Kebo Mtn Trail","Dorr North Ridge"]},
+ {id:"flying",n:"Flying Mountain",s:"Flying",o:null,e:271,p:171,lat:44.30496,lon:-68.31348,g:"somes",lb:"r",pk:"flying-mountain-maine",
+  note:"The shortest peak on the list, but the short climb ends with a big view over the mouth of Somes Sound.",
+  t:["Flying Mtn Trail"]}
+];
+const BY = Object.fromEntries(P.map(p=>[p.id,p]));
+const rankE = [...P].sort((a,b)=>b.e-a.e).map(p=>p.id);
+const rankP = [...P].sort((a,b)=>b.p-a.p||b.e-a.e).map(p=>p.id);
+const TOP=1528;
+
+/* ---------- state ---------- */
+let done={}; try{done=JSON.parse(localStorage.getItem("acadia30")||"{}")||{}}catch(e){done={}}
+for(const k in done) if(!BY[k]) delete done[k];
+const save=()=>{try{localStorage.setItem("acadia30",JSON.stringify(done))}catch(e){}};
+let hideDone=false; try{hideDone=localStorage.getItem("acadia30-hide")==="1"}catch(e){}
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const fmt=n=>n.toLocaleString("en-US");
+
+const BOUNDS={s:44.215,n:44.445,w:-68.44,e:-68.155};
+
+/* ---------- Leaflet map ---------- */
+const map=L.map("map",{zoomSnap:.25,zoomDelta:.5,minZoom:10,maxZoom:17,attributionControl:true,scrollWheelZoom:false,
+  maxBounds:[[BOUNDS.s-.05,BOUNDS.w-.08],[BOUNDS.n+.05,BOUNDS.e+.08]]});
+map.attributionControl.setPrefix(false);
+map.attributionControl.addAttribution('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+L.control.scale({imperial:true,metric:false}).addTo(map);
+map.on("focus",()=>map.scrollWheelZoom.enable());map.on("blur",()=>map.scrollWheelZoom.disable());
+[["land",350],["route",380]].forEach(([n,z])=>{map.createPane(n).style.zIndex=z});
+map.getPane("land").style.pointerEvents="none";map.getPane("route").style.pointerEvents="none";
+const coastLayer=L.geoJSON({type:"FeatureCollection",features:MAPDATA.land.map(poly=>({type:"Feature",geometry:{type:"Polygon",coordinates:poly.map(r=>r.map(([la,lo])=>[lo,la]))}}))},
+  {pane:"land",interactive:false,style:()=>({className:"land"})});
+const usgs=L.tileLayer("https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",
+  {maxZoom:16,maxNativeZoom:16,attribution:'Topo: <a href="https://www.usgs.gov/programs/national-geospatial-program/national-map" target="_blank" rel="noopener">USGS The National Map</a>'});
+const otm=L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+  {maxZoom:17,maxNativeZoom:17,subdomains:"abc",attribution:'Topo: © <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA), © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, SRTM'});
+let base=usgs;try{if(localStorage.getItem("acadia30-base")==="otm")base=otm}catch(e){}
+base.addTo(map);
+L.control.layers({"USGS Topo":usgs,"OpenTopoMap":otm},null,{position:"topright"}).addTo(map);
+map.on("baselayerchange",e=>{try{localStorage.setItem("acadia30-base",e.layer===otm?"otm":"usgs")}catch(_){}});
+// Fallback when tiles can't load (e.g. a sandboxed preview that blocks outside images)
+let tilesOk=0,tilesBad=0,fallback=false;
+function watch(layer){layer.on("tileload",()=>{tilesOk++;if(fallback){fallback=false;coastLayer.remove();note.hidden=true}});
+  layer.on("tileerror",()=>{tilesBad++;if(!tilesOk&&tilesBad>=4&&!fallback){fallback=true;coastLayer.addTo(map);note.hidden=false}})}
+watch(usgs);watch(otm);
+const note=document.createElement("div");note.className="tilenote";note.hidden=true;
+note.innerHTML="<b>Topo tiles blocked here</b>This preview doesn't allow outside map images, so you're seeing the coastline only. The USGS topo loads when the page is hosted, for example in Framer.";
+document.getElementById("map").appendChild(note);
+const routeLayer=L.layerGroup(MAPDATA.route.map((ln,i)=>L.polyline(ln,{pane:"route",className:"route"+(i?" leg2":""),interactive:false,smoothFactor:1}))).addTo(map);
+let miles=0;MAPDATA.route.forEach(ln=>{for(let i=1;i<ln.length;i++)miles+=map.distance(ln[i-1],ln[i])/1609.34});
+document.getElementById("routeLen").textContent=`About ${Math.round(miles)} miles of track.`;
+const markers={};
+for(const p of P){
+  const html=`<div class="pk ${p.lb}"><svg viewBox="0 0 22 20" aria-hidden="true"><path class="tri" d="M11 2 L20 18 H2 Z"/></svg><span class="lbl">${p.s}</span></div>`;
+  const m=L.marker([p.lat,p.lon],{icon:L.divIcon({className:"",html,iconSize:[0,0]}),title:p.n,alt:p.n,keyboard:true,riseOnHover:true}).addTo(map);
+  m.on("click",()=>openPeak(p.id));markers[p.id]=m;
+}
+const fit=()=>map.fitBounds(L.latLngBounds(P.map(p=>[p.lat,p.lon])).pad(.08));
+fit();
+const labelZoom=()=>document.getElementById("map").classList.toggle("nolabels",map.getZoom()<12.5);
+map.on("zoomend",labelZoom);labelZoom();
+document.getElementById("showRoute").onchange=e=>e.target.checked?routeLayer.addTo(map):routeLayer.remove();
+const pkEl=id=>markers[id].getElement()&&markers[id].getElement().querySelector(".pk");
+
+/* ---------- silhouettes (hand-authored, heights to scale) ---------- */
+// [left half-width, right half-width (chart px), left flank, right flank, extra bumps [dx, height fraction, half-width]]
+// Viewed from the south; east is to the right, so east-facing cliffs sit on the right flank.
+const SHAPES={
+ cadillac:[125,100,"plateau","dome"], sargent:[115,95,"dome","dome"], dorr:[70,52,"shoulder","cliff"],
+ pemetic:[58,70,"cone","shoulder"], penobscot:[95,58,"plateau","cliff"], dike:[44,40,"dome","dome"],
+ bernard:[85,75,"dome","dome"], champlain:[72,44,"shoulder","cliff"], gilmore:[40,38,"dome","dome"],
+ bald:[45,40,"dome","cone"], knight:[40,44,"dome","dome"], mansell:[60,65,"dome","shoulder"],
+ cedar:[55,50,"dome","dome"], parkman:[45,44,"dome","cone"], nbubble:[42,45,"bubble","bubble"],
+ norumbega:[80,40,"plateau","cliff"], beech:[56,56,"dome","dome"], sbubble:[34,38,"bubble","bubble"],
+ huguenot:[34,34,"cone","cone"], triad:[58,58,"cone","cone",[[-26,.93,26],[24,.9,24]]],
+ acadia:[88,84,"plateau","plateau"], sauveur:[55,38,"dome","cliff"], beechcliff:[50,24,"shoulder","cliff"],
+ conners:[35,30,"dome","bubble"], day:[60,60,"dome","dome"], beehive:[40,20,"shoulder","cliff"],
+ gorham:[66,54,"plateau","shoulder"], valley:[40,36,"dome","shoulder"], kebo:[46,44,"dome","dome"],
+ flying:[30,30,"cone","dome"]
+};
+const WS=.62; // width scale for all outlines
+const FLANK={dome:[2,1.5],cone:[1,1.2],plateau:[3.2,2.2],cliff:[1,2.6],shoulder:[1.4,1],bubble:[2.2,.85]};
+const SHP={},SN=36;
+function shape(p){
+  if(SHP[p.id])return SHP[p.id];
+  let [wL,wR,tL,tR,extra]=SHAPES[p.id];wL*=WS;wR*=WS;
+  let h=0;for(const c of p.id)h=(h*31+c.charCodeAt(0))|0;
+  const rnd=()=>{h=(h*1103515245+12345)|0;return((h>>>16)&0x7fff)/32767};
+  const ph=[rnd()*6.28,rnd()*6.28,rnd()*6.28];
+  const f=(t,T)=>{const[a,b]=FLANK[T];return Math.pow(Math.max(0,1-Math.pow(t,a)),b)};
+  const pts=[];
+  for(let i=-SN;i<=SN;i++){const s=i/SN,t=Math.abs(s),x=s<0?s*wL:s*wR;let v=f(t,s<0?tL:tR);
+    if(extra)for(const[dx,fr,w]of extra){const tt=Math.abs(x-dx*WS)/(w*WS);if(tt<1)v=Math.max(v,fr*Math.pow(1-tt,1.1))}
+    if(i){v+=(Math.sin(x*.21+ph[0])*.5+Math.sin(x*.47+ph[1])*.3+Math.sin(x*1.1+ph[2])*.2)*.02*Math.min(1,v*3);v=Math.min(v,.992)}
+    if(Math.abs(i)===SN)v=0;
+    pts.push([x,Math.max(0,v)*p.e])}
+  pts[SN][1]=p.e;
+  return SHP[p.id]=pts;
+}
+function silD(p,w,h,sx,sy,cx){const pts=shape(p);
+  return `M${(cx+pts[0][0]*sx).toFixed(1)} ${h}`+pts.map(([x,f])=>`L${(cx+x*sx).toFixed(1)} ${(h-f*sy).toFixed(1)}`).join("")+`L${(cx+pts[pts.length-1][0]*sx).toFixed(1)} ${h}Z`}
+
+/* ---------- comparative heights chart ---------- */
+const CH={W:1200,H:500,G:428,K:290/1528,L:150,R:1100};
+const NSV="http://www.w3.org/2000/svg";
+const mk=(t,a,par)=>{const e=document.createElementNS(NSV,t);for(const k in a)e.setAttribute(k,a[k]);if(par)par.appendChild(e);return e};
+const chart=document.getElementById("heights"),chartEls={};
+let chartGL,chartMode="height",groupSpans=[];
+const gMax=gid=>Math.max(...P.filter(p=>p.g===gid).map(p=>p.e));
+(function buildChart(){
+  chart.setAttribute("viewBox",`0 0 ${CH.W} ${CH.H}`);
+  const defs=mk("defs",{},chart);
+  mk("path",{d:"M.8 0V4",class:"hl"},mk("pattern",{id:"hatch",width:3.2,height:4,patternUnits:"userSpaceOnUse"},defs));
+  mk("path",{d:"M.8 0V4",class:"hl2"},mk("pattern",{id:"hatchDone",width:3.2,height:4,patternUnits:"userSpaceOnUse"},defs));
+  const sky=mk("g",{class:"sky"},chart);
+  for(let y=12;y<CH.G-24;y+=5)mk("line",{x1:72,x2:CH.W-10,y1:y,y2:y,"stroke-width":.6,"stroke-opacity":(.15*(1-y/CH.G)).toFixed(3)},sky);
+  const sc=mk("g",{class:"scale-ax"},chart);
+  for(let ft=0;ft<=1500;ft+=250){const y=CH.G-ft*CH.K;
+    if(ft&&ft%500===0)mk("line",{x1:72,x2:CH.W-10,y1:y,y2:y,class:"rule"},sc);
+    mk("line",{x1:66,x2:72,y1:y,y2:y},sc);
+    mk("text",{x:62,y:y+3.5,"text-anchor":"end"},sc).textContent=ft?fmt(ft):"Sea level"}
+  mk("line",{x1:72,x2:72,y1:CH.G,y2:CH.G-1528*CH.K},sc);
+  mk("text",{class:"axt",transform:`translate(24 ${CH.G-150}) rotate(-90)`,"text-anchor":"middle"},sc).textContent="FEET ABOVE THE SEA";
+  const sea=mk("g",{class:"sea"},chart);
+  for(let k=0;k<4;k++)mk("line",{x1:72,x2:CH.W-10,y1:CH.G+3+k*4,y2:CH.G+3+k*4,"stroke-width":.7,"stroke-opacity":(.5-k*.11).toFixed(2)},sea);
+  const ca=mk("g",{class:"cart",transform:`translate(${CH.W-22} 24)`},chart);
+  mk("rect",{x:-306,y:-10,width:306,height:94,class:"cf"},ca);
+  mk("rect",{x:-302,y:-6,width:298,height:86,class:"cf2"},ca);
+  mk("text",{x:-153,y:12,"text-anchor":"middle",class:"c1"},ca).textContent="COMPARATIVE HEIGHTS OF THE";
+  mk("text",{x:-153,y:48,"text-anchor":"middle",class:"c2",textLength:270,lengthAdjust:"spacingAndGlyphs"},ca).textContent="PEAKS OF ACADIA";
+  mk("text",{x:-153,y:68,"text-anchor":"middle",class:"c3"},ca).textContent="Mount Desert Island, Maine · heights to scale";
+  mk("rect",{x:73,y:0,width:CH.W-80,height:CH.G+.5},mk("clipPath",{id:"chartClip"},defs));
+  const layer=mk("g",{"clip-path":"url(#chartClip)"},chart);
+  const Y=f=>(CH.G-f*CH.K).toFixed(1);
+  for(const id of rankE){const p=BY[id],pts=shape(p),wR=SHAPES[id][1]*WS;
+    const g=mk("g",{class:"mt",tabindex:0,role:"button","aria-label":`${p.n}, ${fmt(p.e)} feet`,"data-id":id},layer);
+    const d="M"+pts.map(([x,f])=>`${x.toFixed(1)} ${Y(f)}`).join("L")+"Z";
+    mk("path",{d,class:"body"},g);
+    mk("path",{d:"M"+pts.slice(SN).map(([x,f])=>`${x.toFixed(1)} ${Y(f)}`).join("L")+`L${(wR*.16).toFixed(1)} ${CH.G}Z`,class:"shade"},g);
+    mk("path",{d,class:"edge"},g);
+    const sy=CH.G-p.e*CH.K;let off=0;
+    if(id==="beech"){off=11;mk("path",{d:`M-3.5 ${sy+.5}L-2 ${sy-10}H2L3.5 ${sy+.5}M-2.7 ${sy-5}H2.7M-2 ${sy-10}L2.7 ${sy-5}M2 ${sy-10}L-2.7 ${sy-5}M-3.5 ${sy-10}H3.5`,class:"glyph",fill:"none"},g)}
+    if(id==="sbubble"){const q=pts[SN+20];mk("circle",{cx:q[0].toFixed(1),cy:(CH.G-q[1]*CH.K-3.2).toFixed(1),r:3.2,class:"glyph"},g)}
+    mk("line",{x1:0,x2:0,y1:sy-2-off,y2:sy-9-off,class:"lead"},g);
+    const t=mk("text",{transform:`translate(1.5 ${(sy-11-off).toFixed(1)}) rotate(-50)`,class:"lbl"},g);
+    t.appendChild(document.createTextNode(p.s+" "));mk("tspan",{class:"lft"},t).textContent=fmt(p.e);
+    g.addEventListener("click",()=>openPeak(id));
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openPeak(id)}});
+    chartEls[id]=g}
+  chartGL=mk("g",{class:"glabels","aria-hidden":"true"},chart);
+})();
+function drawGroupLabels(){
+  chartGL.innerHTML="";
+  groupSpans.forEach(([gid,x0,x1],i)=>{const y=CH.G+20,ty=y+18+(i%3)*16,cx=(x0+x1)/2;
+    mk("path",{d:`M${x0-10} ${y}v6H${x1+10}v-6M${cx} ${y+6}v${ty-y-20}`},chartGL);
+    const mem=P.filter(p=>p.g===gid),k=mem.filter(p=>done[p.id]).length;
+    const t=mk("text",{x:cx,y:ty,"text-anchor":"middle"},chartGL);t.appendChild(document.createTextNode(G[gid].n+" "));
+    mk("tspan",{class:"gc"},t).textContent=`${k}/${mem.length}`})}
+function layoutChart(mode){
+  chartMode=mode==="group"?"group":"height";
+  const xs={};
+  if(chartMode==="height"){const step=(CH.R-CH.L)/29;rankE.forEach((id,i)=>xs[id]=CH.L+i*step)}
+  else{const gids=Object.keys(G).sort((a,b)=>gMax(b)-gMax(a)),gap=1.7,slot=(CH.R-CH.L)/(29+(gids.length-1)*gap);let x=CH.L;groupSpans=[];
+    gids.forEach(gid=>{const mem=P.filter(p=>p.g===gid).sort((a,b)=>b.e-a.e),x0=x;mem.forEach(p=>{xs[p.id]=x;x+=slot});groupSpans.push([gid,x0,x-slot]);x+=gap*slot});
+    drawGroupLabels()}
+  const order=chartMode==="height"?rankE:Object.keys(xs).sort((a,b)=>xs[a]-xs[b]);
+  order.forEach((id,i)=>{const g=chartEls[id];g.style.transitionDelay=`${i*14}ms`;g.style.transform=`translate(${xs[id].toFixed(1)}px,0px)`});
+  chartGL.classList.toggle("on",chartMode==="group");
+  try{localStorage.setItem("acadia30-chart",chartMode)}catch(e){}
+}
+const chartSel=document.getElementById("chartOrder");
+chartSel.onchange=()=>layoutChart(chartSel.value);
+
+/* ---------- ledger ---------- */
+const ledger=document.getElementById("ledger"),rows={};
+const tick='<svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4.5"/></svg>';
+for(const p of P){const r=document.createElement("div");r.className="row";r.dataset.id=p.id;
+  r.innerHTML=`<button class="chk" aria-pressed="false" aria-label="Mark ${p.n} summited">${tick}</button><span class="rank"></span>
+   <svg class="sil" viewBox="0 0 78 30" preserveAspectRatio="none" aria-hidden="true"><path d="${silD(p,78,30,.45,28/1528,39)}"/></svg>
+   <button class="nm"><b>${p.n}</b><small>${G[p.g].n}${p.o?` · ${p.o}`:""}</small></button>
+   <div class="bar"><i></i></div><span class="vl mono"></span>`;
+  rows[p.id]=r;ledger.appendChild(r)}
+let ledgerMode="height";
+function layoutLedger(mode,animate){
+  const order=mode==="height"?rankE:rankP;const first={};
+  if(animate&&!RM)for(const id of order)first[id]=rows[id].getBoundingClientRect().top;
+  order.forEach((id,i)=>{const r=rows[id],p=BY[id];ledger.appendChild(r);r.querySelector(".rank").textContent=i+1;
+    const v=mode==="height"?p.e:p.p;r.querySelector(".bar i").style.width=(v/TOP*100)+"%";r.querySelector(".vl").textContent=fmt(v)+" ft"});
+  if(animate&&!RM)order.forEach((id,i)=>{const r=rows[id];const dy=first[id]-r.getBoundingClientRect().top;
+    if(dy)r.animate([{transform:`translateY(${dy}px)`},{transform:"none"}],{duration:650,delay:Math.min(i*14,300),easing:"cubic-bezier(.2,.8,.2,1)",fill:"backwards"})});
+  document.getElementById("ledgerTitle").textContent=mode==="height"?"By height":"By prominence";
+  document.getElementById("ledgerSub").textContent=mode==="height"
+    ?"All 30 summits by elevation above sea level. Bars share one scale, 0 to 1,528 ft."
+    :"How much each summit stands on its own. Bernard jumps to second; Gilmore and Valley Peak barely register.";
+  document.getElementById("promNote").hidden=mode!=="prominence";
+}
+
+/* ---------- groups ---------- */
+const groupsEl=document.getElementById("groups"),grpCards={};
+for(const gid in G){const mem=P.filter(p=>p.g===gid).sort((a,b)=>b.e-a.e);const c=document.createElement("article");c.className="grp";
+  const W=300,H=56,slot=W/mem.length;let sil="";
+  mem.forEach((p,i)=>{sil+=`<path data-id="${p.id}" d="${silD(p,W,H,.62,50/1528,slot*(i+.5))}"/>`});
+  c.innerHTML=`<header><h3>${G[gid].n}</h3><span class="cnt mono"></span></header>
+    <svg class="gsil" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${sil}</svg><div class="gbar"><i></i></div><p>${G[gid].tip}</p>
+    <ul>${mem.map(p=>`<li data-id="${p.id}"><button class="chk" aria-pressed="false" aria-label="Mark ${p.n} summited">${tick}</button><button class="nm"><b>${p.n}</b></button><span class="mono" style="font-size:13px;color:var(--muted)">${fmt(p.e)}</span></li>`).join("")}</ul>`;
+  grpCards[gid]=c;groupsEl.appendChild(c)}
+
+/* ---------- paint ---------- */
+function paint(){
+  const n=Object.keys(done).length;
+  document.getElementById("ringNum").textContent=n;
+  document.getElementById("ringVal").setAttribute("stroke-dashoffset",(301.6*(1-n/30)).toFixed(1));
+  document.getElementById("stFeet").textContent=fmt(P.filter(p=>done[p.id]).reduce((s,p)=>s+p.e,0))+" ft";
+  const hi=rankE.find(id=>done[id]);document.getElementById("stHigh").textContent=hi?BY[hi].s:"—";
+  let gdone=0;
+  for(const gid in G){const mem=P.filter(p=>p.g===gid),k=mem.filter(p=>done[p.id]).length,c=grpCards[gid];
+    c.querySelector(".cnt").textContent=`${k}/${mem.length}`;c.querySelector(".gbar i").style.width=(k/mem.length*100)+"%";
+    c.classList.toggle("complete",k===mem.length);if(k===mem.length)gdone++;
+    c.querySelectorAll(".gsil path").forEach(pa=>pa.classList.toggle("todo",!done[pa.dataset.id]));
+    c.querySelectorAll("li").forEach(li=>{li.querySelector(".chk").setAttribute("aria-pressed",!!done[li.dataset.id]);li.hidden=hideDone&&!!done[li.dataset.id]})}
+  document.getElementById("stGroups").textContent=`${gdone} / 9`;
+  for(const id in rows){const r=rows[id];r.querySelector(".chk").setAttribute("aria-pressed",!!done[id]);r.classList.toggle("isdone",!!done[id]);r.classList.toggle("hide",hideDone&&!!done[id])}
+  for(const id in markers){const e=pkEl(id);if(e){e.classList.toggle("done",!!done[id]);e.classList.toggle("dim",hideDone&&!!done[id]);e.classList.toggle("sel",id===current)}}
+  for(const id in chartEls){chartEls[id].classList.toggle("done",!!done[id]);chartEls[id].classList.toggle("dim",hideDone&&!!done[id])}
+  if(chartMode==="group")drawGroupLabels();
+  const nl=document.getElementById("nextList");nl.innerHTML="";
+  rankE.filter(id=>!done[id]).slice(0,5).forEach(id=>{const b=document.createElement("button");b.innerHTML=`<span>${BY[id].n}</span><span class="mono">${fmt(BY[id].e)}</span>`;b.onclick=()=>openPeak(id);nl.appendChild(b)});
+  if(!nl.children.length)nl.innerHTML='<p style="margin:0;font-size:14px">All 30 summited. That\'s the full challenge.</p>';
+  if(current)fillDrawer(current);
+}
+function toggle(id,on,origin){
+  on=on===undefined?!done[id]:on;
+  if(on)done[id]=done[id]||new Date().toISOString().slice(0,10);else delete done[id];
+  save();paint();
+  if(on&&!RM){const e=pkEl(id);if(e)e.querySelector(".tri").animate([{transform:"scale(1.9)"},{transform:"scale(1)"}],{duration:500,easing:"cubic-bezier(.2,.8,.2,1)"});
+    if(origin)origin.animate([{transform:"scale(1.25)"},{transform:"scale(1)"}],{duration:350,easing:"ease-out"})}
+}
+
+/* ---------- drawer ---------- */
+let current=null,lastFocus=null;
+const drawer=document.getElementById("drawer"),scrim=document.getElementById("scrim");
+function fillDrawer(id){const p=BY[id];
+  document.getElementById("dGroup").textContent=G[p.g].n+" · Mount Desert Island";
+  document.getElementById("dName").textContent=p.n;
+  document.getElementById("dOld").textContent=p.o?`Formerly ${p.o}`:"";
+  document.getElementById("dSil").innerHTML=(id!=="cadillac"?`<path class="ghost" d="${silD(BY.cadillac,300,90,1.3,80/1528,150)}"/><text x="6" y="12">CADILLAC FOR SCALE</text>`:"")+`<path d="${silD(p,300,90,1.3,80/1528,150)}"/>`;
+  document.getElementById("dElev").innerHTML=`${fmt(p.e)}<span> ft</span>`;
+  document.getElementById("dProm").innerHTML=`${fmt(p.p)}<span> ft</span>`;
+  document.getElementById("dRankE").innerHTML=`${rankE.indexOf(id)+1}<span> of 30</span>`;
+  document.getElementById("dRankP").innerHTML=`${rankP.indexOf(id)+1}<span> of 30</span>`;
+  const b=document.getElementById("dCheck");b.setAttribute("aria-pressed",!!done[id]);
+  b.innerHTML=done[id]?`<svg width="20" height="20" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2.4" fill="none"><path d="M3 8.5 L6.5 12 L13 4.5"/></svg> Summited`:"Mark summited";
+  const dd=document.getElementById("dDate");dd.value=done[id]||"";dd.disabled=!done[id];
+  document.getElementById("dNote").textContent=p.note;
+  document.getElementById("dTrails").innerHTML=p.t.map(t=>`<li>${t}</li>`).join("");
+  const q=encodeURIComponent(`${p.n} Acadia Maine`);
+  document.getElementById("dLinks").innerHTML=`<a href="https://en.wikipedia.org/w/index.php?search=${q}" target="_blank" rel="noopener">Wikipedia ↗</a><a href="https://peakery.com/${p.pk}/" target="_blank" rel="noopener">Peakery ↗</a><button id="dMap">Show on map</button>`;
+  document.getElementById("dMap").onclick=()=>{closePeak();setView("map");map.flyTo([p.lat,p.lon],14.5,{duration:RM?0:1})};
+  const nb=document.getElementById("dNbrs");nb.innerHTML="";
+  P.filter(o=>o.g===p.g&&o.id!==id).forEach(o=>{const bb=document.createElement("button");bb.textContent=(done[o.id]?"✓ ":"")+o.n;bb.onclick=()=>openPeak(o.id);nb.appendChild(bb)});
+  document.getElementById("dPos").textContent=`${p.lat.toFixed(4)}° N, ${Math.abs(p.lon).toFixed(4)}° W`+(p.ap?" · map position approximate":"");
+}
+function openPeak(id){current=id;lastFocus=document.activeElement;fillDrawer(id);drawer.classList.add("on");scrim.classList.add("on");drawer.setAttribute("aria-hidden","false");paint();setTimeout(()=>document.getElementById("dClose").focus(),50)}
+function closePeak(){current=null;drawer.classList.remove("on");scrim.classList.remove("on");drawer.setAttribute("aria-hidden","true");paint();if(lastFocus&&lastFocus.focus)lastFocus.focus({preventScroll:true})}
+document.getElementById("dClose").onclick=closePeak;scrim.onclick=closePeak;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&current)closePeak()});
+document.getElementById("dCheck").onclick=e=>toggle(current,undefined,e.currentTarget);
+document.getElementById("dDate").onchange=e=>{if(current&&done[current]&&e.target.value){done[current]=e.target.value;save()}};
+
+/* ---------- wiring ---------- */
+document.addEventListener("click",e=>{
+  const chk=e.target.closest(".row .chk, .grp .chk");if(chk){toggle(chk.closest("[data-id]").dataset.id,undefined,chk);return}
+  const nm=e.target.closest(".row .nm, .grp .nm");if(nm)openPeak(nm.closest("[data-id]").dataset.id)});
+const hd=document.getElementById("hideDone");hd.checked=hideDone;
+hd.onchange=()=>{hideDone=hd.checked;try{localStorage.setItem("acadia30-hide",hideDone?"1":"0")}catch(e){}paint()};
+
+const VIEWS=["map","height","prominence","groups"];
+function setView(v,first){
+  if(!VIEWS.includes(v))v="map";
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.view===v));
+  const wasMap=!document.getElementById("view-map").hidden;
+  document.getElementById("view-map").hidden=v!=="map";
+  document.getElementById("view-groups").hidden=v!=="groups";
+  const isL=v==="height"||v==="prominence",wasL=!document.getElementById("view-ledger").hidden;
+  document.getElementById("view-ledger").hidden=!isL;
+  if(v==="map"&&!wasMap)setTimeout(()=>{map.invalidateSize();paint()},0);
+  if(isL){layoutLedger(v,wasL&&ledgerMode!==v&&!first);ledgerMode=v}
+  if(!first&&!RM){const sec=document.getElementById(isL?"view-ledger":"view-"+v);
+    if(!(isL&&wasL))sec.animate([{opacity:.4,transform:"translateY(8px)"},{opacity:1,transform:"none"}],{duration:380,easing:"cubic-bezier(.2,.8,.2,1)"});
+    if(v==="groups")[...groupsEl.children].forEach((c,i)=>c.animate([{opacity:.3,transform:"translateY(14px)"},{opacity:1,transform:"none"}],{duration:450,delay:i*45,easing:"cubic-bezier(.2,.8,.2,1)",fill:"backwards"}))}
+  try{history.replaceState(null,"","#"+v)}catch(e){}
+}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>setView(t.dataset.view));
+
+layoutLedger("height",false);
+let savedChart="height";try{savedChart=localStorage.getItem("acadia30-chart")||"height"}catch(e){}
+chartSel.value=savedChart==="group"?"group":"height";
+layoutChart(chartSel.value);
+requestAnimationFrame(()=>requestAnimationFrame(()=>chart.classList.remove("still")));
+setView((location.hash||"#map").slice(1),true);
+paint();
+
+})();
+</script>
+
+</body>
+</html>
