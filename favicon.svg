@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#141B17"/>
+  <g stroke="#E6EAE5" stroke-width="3" stroke-opacity=".13"><path d="M64 100H448M64 124H448M64 148H448M64 172H448M64 196H448M64 220H448"/></g>
+  <path d="M236 368C280 300 318 238 350 214C360 207 368 211 374 222L396 266C408 286 428 302 446 320C460 336 468 352 474 368Z" fill="#E6EAE5" fill-opacity=".5"/>
+  <path d="M38 368C84 300 120 214 168 158C186 138 200 128 214 128C228 128 238 136 250 152C292 212 330 300 362 368Z" fill="#E6EAE5"/>
+  <clipPath id="e"><path d="M214 128C228 128 238 136 250 152C292 212 330 300 362 368H246Z"/></clipPath>
+  <g clip-path="url(#e)" stroke="#141B17" stroke-width="3.2"><path d="M222 120V372M232 120V372M242 120V372M252 120V372M262 120V372M272 120V372M282 120V372M292 120V372M302 120V372M312 120V372M322 120V372M332 120V372M342 120V372M352 120V372"/></g>
+  <g stroke="#E6EAE5" stroke-linecap="round"><path d="M70 394H442" stroke-width="7"/><path d="M110 418H402" stroke-width="5" stroke-opacity=".6"/><path d="M150 440H362" stroke-width="4" stroke-opacity=".35"/></g>
+</svg>

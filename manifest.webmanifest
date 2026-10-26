@@ -1,0 +1,22 @@
+{
+  "id": "./",
+  "name": "Acadia 30",
+  "short_name": "Acadia 30",
+  "description": "Track the Acadia National Park Full 30 Peak Challenge: comparative heights, a trail map that works offline, rankings and check-offs.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#E6EAE5",
+  "theme_color": "#141B17",
+  "categories": ["travel", "sports", "navigation"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "screenshots": [
+    { "src": "og-image.png", "sizes": "1200x630", "type": "image/png", "form_factor": "wide", "label": "Comparative heights of the 30 peaks" }
+  ]
+}
