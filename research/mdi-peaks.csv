@@ -1,11 +1,11 @@
 id,name,elev_ft,elev_source,lat,lon,land,access,status,notes
 great-head,Great Head,140,GNIS,44.32844,-68.1748,park,trail,extension,Seaside headland above Sand Beach with its own summit marker; Great Head Trail loop.
 eagles-crag,Eagles Crag,703,GNIS,44.32585,-68.21973,park,trail,extension,Ledge on Cadillac's south ridge; the 0.5-mile Eagles Crag Loop branches off the Cadillac South Ridge Trail.
-bald-mtn,Bald Mountain,409,GNIS,44.29433,-68.38414,park-edge,trail,extension,"Southwest ridge of Bernard, reached by the West Ledge Trail. Sits on the park boundary line (legacy boundary layer reads outside)."
+bald-mtn,Bald Mountain,409,GNIS,44.29433,-68.38414,park,trail,extension,"Southwest ridge of Bernard, reached by the West Ledge Trail. Inside the park (confirmed on the park map; the legacy boundary layer reads it just outside)."
 paradise,Paradise Hill,290,GNIS,44.40529,-68.24483,park,carriage,extension,"Inside the park near Hulls Cove; the Paradise Hill carriage road loop circles it with Frenchman Bay views. Bike- and walk-able, no cars."
 whitecap,The Whitecap,915,GNIS,44.36418,-68.23535,park,unmarked,candidate-offtrail,"Knob north of Cadillac; reached by an unmarked path from the summit road, not a maintained trail."
 eliot,Eliot Mountain,456,GNIS,44.30356,-68.27396,preserve,trail,extension,"Land & Garden Preserve, Northeast Harbor. Eliot Mountain Trail (1 mi), Charles Savage Trail and Asticou Ridge Trail reach the summit. No bikes; dog rules vary by trail."
-redfield,Redfield Hill,300,estimate,44.30836,-68.24962,preserve,trail,extension,"Preserve land above Little Long Pond, Seal Harbor; a 'Redfield Hill Trail' is published by hiking apps. Confirm it reaches the summit. Height estimated (~300 ft) from neighbouring Barr and Mitchell Hills."
+redfield,Redfield Hill,300,estimate,44.30836,-68.24962,preserve,trail,extension,"Land & Garden Preserve above Little Long Pond, Seal Harbor; the Redfield Hill Trail reaches the summit (confirmed). Height estimated (~300 ft) from neighbouring Barr and Mitchell Hills."
 barr,Barr Hill,338,GNIS,44.30158,-68.24968,preserve,unmarked,candidate-offtrail,Preserve land south of Redfield Hill; crossed on the Acadia peaks traverse via the Richard Trail. No confirmed summit trail.
 mcfarland,McFarland Mountain,732,GNIS,44.38223,-68.26513,park,offtrail,candidate-offtrail,Behind park headquarters; reached by walking up an old ski slope from the weather station. NPS/URI survey mark at the top.
 brewer,Brewer Mountain,431,GNIS,44.38208,-68.24961,park,offtrail,candidate-offtrail,North of Eagle Lake; off-trail from Eagle Lake Road.
@@ -19,7 +19,7 @@ pine-hill,Pine Hill,,,44.31455,-68.39366,park,offtrail,candidate-offtrail,"West 
 bald-hill,Bald Hill,247,GNIS,44.28769,-68.38853,park,offtrail,candidate-offtrail,Below Bald Mountain on the south side of Western Mountain; no known trail.
 china-hill,China Hill,164,GNIS,44.26709,-68.36627,park,offtrail,candidate-offtrail,Near Bass Harbor; reads inside the park boundary. Verify on the park map before listing.
 gilboa,Mount Gilboa,171,GNIS,44.26174,-68.36774,park,offtrail,candidate-offtrail,Next to China Hill near Bass Harbor; reads inside the park boundary. Verify on the park map.
-youngs,Youngs Mountain,678,GNIS,44.39196,-68.2673,private,none,not-eligible,Reads just outside the park boundary north of McFarland. Peakbaggers reach it by bushwhack from Breakneck Ponds; ownership should be confirmed before it's promoted.
+youngs,Youngs Mountain,678,GNIS,44.39196,-68.2673,private,none,not-eligible,"North of McFarland, outside the park on private land (confirmed on the park map)."
 ox-hill,Ox Hill,307,GNIS,44.30007,-68.23557,private,none,not-eligible,"Seal Harbor, outside the park."
 ireson,Ireson Hill,226,GNIS,44.43194,-68.26313,private,none,not-eligible,"Salisbury Cove, next to MDI Biological Laboratory; outside the park."
 frenchmans,Frenchmans Hill,255,GNIS,44.3965,-68.30609,private,none,not-eligible,North of Town Hill; outside the park.

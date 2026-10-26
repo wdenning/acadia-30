@@ -46,10 +46,10 @@
    "elev_source": "GNIS",
    "lat": 44.29433,
    "lon": -68.38414,
-   "land": "park-edge",
+   "land": "park",
    "access": "trail",
    "status": "extension",
-   "notes": "Southwest ridge of Bernard, reached by the West Ledge Trail. Sits on the park boundary line (legacy boundary layer reads outside)."
+   "notes": "Southwest ridge of Bernard, reached by the West Ledge Trail. Inside the park (confirmed on the park map; the legacy boundary layer reads it just outside)."
   },
   {
    "id": "paradise",
@@ -97,7 +97,7 @@
    "land": "preserve",
    "access": "trail",
    "status": "extension",
-   "notes": "Preserve land above Little Long Pond, Seal Harbor; a 'Redfield Hill Trail' is published by hiking apps. Confirm it reaches the summit. Height estimated (~300 ft) from neighbouring Barr and Mitchell Hills."
+   "notes": "Land & Garden Preserve above Little Long Pond, Seal Harbor; the Redfield Hill Trail reaches the summit (confirmed). Height estimated (~300 ft) from neighbouring Barr and Mitchell Hills."
   },
   {
    "id": "barr",
@@ -265,7 +265,7 @@
    "land": "private",
    "access": "none",
    "status": "not-eligible",
-   "notes": "Reads just outside the park boundary north of McFarland. Peakbaggers reach it by bushwhack from Breakneck Ponds; ownership should be confirmed before it's promoted."
+   "notes": "North of McFarland, outside the park on private land (confirmed on the park map)."
   },
   {
    "id": "ox-hill",
@@ -411,5 +411,6 @@
    "status": "not-eligible",
    "notes": "36-ft knob by Bass Harbor Marsh."
   }
- ]
+ ],
+ "verified": "Bald Mountain (in park), Youngs Mountain (private) and the Redfield Hill summit trail confirmed against the official park map, 2026-10-26."
 }
