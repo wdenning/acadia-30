@@ -778,8 +778,9 @@ function buildStyle(){
     {id:"peaks",type:"symbol",source:"peaks",
       layout:{"icon-image":["case",["get","done"],"tri-d-"+th,"tri-t-"+th],"icon-size":["interpolate",["linear"],["zoom"],10,.72,14,1],"icon-allow-overlap":true,
         "symbol-sort-key":["-",["get","ft"]],
-        "text-field":["format",["step",["zoom"],["get","label"],13.5,["get","name"]],{"text-font":["literal",FB]},"\n",{},
-          ["concat",["number-format",["get","ft"],{}]," ft"],{"text-font":["literal",FR],"font-scale":.82}],
+        "text-field":["step",["zoom"],
+          ["format",["get","label"],{"text-font":["literal",FB]},"\n",{},["concat",["number-format",["get","ft"],{}]," ft"],{"text-font":["literal",FR],"font-scale":.82}],
+          13.5,["format",["get","name"],{"text-font":["literal",FB]},"\n",{},["concat",["number-format",["get","ft"],{}]," ft"],{"text-font":["literal",FR],"font-scale":.82}]],
         "text-font":FB,"text-size":["interpolate",["linear"],["zoom"],10,10.5,14,12.5],"text-variable-anchor":["left","right","top","bottom"],
         "text-radial-offset":1.05,"text-justify":"auto","text-optional":true,"text-max-width":9},
       paint:{"text-color":c.ink,...halo,"icon-opacity":["case",["get","dim"],.22,1],"text-opacity":["case",["get","dim"],.2,1]}}
@@ -889,7 +890,7 @@ if(hasLibs){
   map.on("data",e=>{if(e.sourceId==="omt"&&e.tile){omtLoaded=true;clearTimeout(mt);mt=setTimeout(matchPeaks,250)}});
   map.on("load",()=>{mapReady=true;updateStatus()});
   let errs=0;
-  map.on("error",e=>{errs++;if(!omtLoaded&&errs>=4)goFallback("<b>Map tiles didn't load</b>Showing the coastline only. This happens in previews that block outside map data; the published site loads the full map.")});
+  map.on("error",e=>{const msg=String(e.error&&e.error.message||e.error||"");console.warn("[map]",e.sourceId||"",msg);if(e.sourceId!=="omt"&&!/openfreemap/i.test(msg))return;errs++;if(!omtLoaded&&errs>=4)goFallback("<b>Map tiles didn't load</b>Showing the coastline only. This happens in previews that block outside map data; the published site loads the full map.")});
   setTimeout(()=>{if(!omtLoaded)goFallback("<b>Map tiles didn't load</b>Showing the coastline only. Check your connection, or open the published site to see the full map.")},9000);
   map.on("mousemove",e=>{
     const ls=["peaks","osm-peaks","trail-hit"].filter(l=>map.getLayer(l));
